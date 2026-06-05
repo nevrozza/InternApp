@@ -1,0 +1,14 @@
+plugins {
+    // --- already in buildSrc ---
+    alias(libs.plugins.androidApplication) apply false
+    alias(libs.plugins.androidLibrary) apply false
+    alias(libs.plugins.composeMultiplatform) apply false
+    alias(libs.plugins.composeCompiler) apply false
+    alias(libs.plugins.kotlinMultiplatform) apply false
+    alias(libs.plugins.serialization) apply false
+    alias(libs.plugins.ksp) apply false
+
+
+    // --- not in buildSrc ---
+    alias(libs.plugins.stability.analyzer) apply false
+}
