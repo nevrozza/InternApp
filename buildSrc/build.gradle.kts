@@ -16,6 +16,8 @@ dependencies {
     implementation(libs.gradle.plugin.serialization)
     implementation(libs.gradle.plugin.ksp)
 
+    implementation(libs.gradle.plugin.room)
+
 
     //https://stackoverflow.com/a/70878181
     // An error in the editor, although the dependencies are correctly resolved.
