@@ -4,9 +4,8 @@ import com.russhwolf.settings.ExperimentalSettingsImplementation
 import com.russhwolf.settings.KeychainSettings
 import com.russhwolf.settings.NSUserDefaultsSettings
 import com.russhwolf.settings.Settings
+import core.common.PlatformConfig
 import platform.Foundation.NSUserDefaults
-
-internal actual class PlatformConfig
 
 internal actual fun createPlainSettings(platformConfig: PlatformConfig): Settings {
     return NSUserDefaultsSettings(

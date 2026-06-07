@@ -7,7 +7,9 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.shared.core.storage.api)
+            api(projects.shared.core.storage.api)
+            api(projects.shared.core.common)
+
             implementation(libs.koin.core)
 
             implementation(libs.settings.core)

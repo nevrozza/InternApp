@@ -2,9 +2,8 @@ package core.storage.impl.keyvalue
 
 import com.russhwolf.settings.PreferencesSettings
 import com.russhwolf.settings.Settings
+import core.common.PlatformConfig
 import java.util.prefs.Preferences
-
-internal actual class PlatformConfig
 
 internal actual fun createPlainSettings(platformConfig: PlatformConfig): Settings {
     return PreferencesSettings(

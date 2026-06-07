@@ -5,10 +5,7 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.SharedPreferencesSettings
-
-internal actual class PlatformConfig(
-    val context: Context
-)
+import core.common.PlatformConfig
 
 internal actual fun createPlainSettings(
     platformConfig: PlatformConfig
