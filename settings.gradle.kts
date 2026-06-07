@@ -36,6 +36,10 @@ include(":apps:androidApp")
 include(":apps:desktopApp")
 include(":apps:ios:iosKMP")
 
+include(":shared:root:presentation")
+include(":shared:root:compose")
+
+include(":shared:core:common")
 include(":shared:core:network:api")
 include(":shared:core:network:impl")
 include(":shared:core:storage:api")
@@ -53,3 +57,4 @@ include(":shared:disk:compose")
 
 include(":shared:utils")
 include(":shared:utils:pure")
+include(":shared:utils:compose")
