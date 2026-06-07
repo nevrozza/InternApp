@@ -6,6 +6,8 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
     kotlin("multiplatform")
+    kotlin("plugin.serialization")
+
     id("com.android.kotlin.multiplatform.library")
     id("com.google.devtools.ksp")
 }
@@ -19,4 +21,13 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
     jvm()
+
+    applyDefaultHierarchyTemplate {
+        common {
+            group("notIOS") {
+                withAndroidTarget()
+                withJvm()
+            }
+        }
+    }
 }
