@@ -10,6 +10,13 @@ kotlin {
     jvm()
     sourceSets {
         commonMain.dependencies {
+            implementation(projects.shared.core.common)
+            implementation(projects.shared.root.compose)
+            implementation(projects.shared.utils)
+
+            implementation(libs.koin.core)
+
+            implementation(libs.decompose.compose)
         }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -20,7 +27,7 @@ kotlin {
 }
 compose.desktop {
     application {
-        mainClass = Config.namespace+".MainKt"
+        mainClass = Config.namespace + ".MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)

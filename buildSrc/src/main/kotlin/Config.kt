@@ -4,8 +4,6 @@
     "ConstPropertyName"
 )
 
-import org.gradle.api.JavaVersion
-
 object Config {
     const val namespace = "org.nevrzq.intern"
 
@@ -33,6 +31,5 @@ object Config {
 
     object Java {
         const val javaVersionInt = 21
-        val javaVersionGradle = JavaVersion.VERSION_21
     }
 }

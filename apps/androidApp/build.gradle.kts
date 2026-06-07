@@ -5,6 +5,13 @@ plugins {
 
 
 dependencies {
+    implementation(projects.shared.core.common)
+    implementation(projects.shared.root.compose)
+    implementation(projects.shared.utils)
+
+    implementation(libs.koin.android)
+
+
     implementation(libs.androidx.activity.compose)
 
     implementation(libs.compose.uiToolingPreview)
@@ -36,7 +43,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = Config.Java.javaVersionGradle
-        targetCompatibility = Config.Java.javaVersionGradle
+        val javaVersion = JavaVersion.toVersion(Config.Java.javaVersionInt)
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaVersion
     }
 }

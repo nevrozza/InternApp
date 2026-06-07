@@ -18,7 +18,10 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-//            implementation(projects.shared.root.compose)
+            implementation(projects.shared.core.common)
+            implementation(projects.shared.root.compose)
+            implementation(projects.shared.utils)
+
             implementation(libs.compose.components.resources)
         }
     }

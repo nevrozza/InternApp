@@ -3,23 +3,35 @@ package org.nevrzq.intern
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import com.arkivanov.decompose.retainedComponent
+import core.common.PlatformConfig
+import org.koin.core.context.GlobalContext.stopKoin
+import root.RealRootComponent
+import root.RootScreen
+import root.RootComponent
+import di.initKoin
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
+
         super.onCreate(savedInstanceState)
 
+        initKoin(
+            PlatformConfig(context = applicationContext)
+        )
+
+        val rootComponent: RootComponent = retainedComponent { componentContext ->
+            RealRootComponent(componentContext)
+        }
+        screenSetup()
+
         setContent {
-//            App()
+            RootScreen(rootComponent)
         }
     }
-}
 
-@Preview
-@Composable
-fun AppAndroidPreview() {
-//    App()
+    override fun onDestroy() {
+        super.onDestroy()
+        stopKoin()
+    }
 }
