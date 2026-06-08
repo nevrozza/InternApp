@@ -6,6 +6,7 @@ agp = "9.2.1"
 androidx-activity = "1.12.3"
 
 coroutines = "1.11.0"
+datetime = "0.8.0"
 
 coil = "3.4.0"
 material3 = "1.11.0-alpha07"
@@ -61,8 +62,7 @@ koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
 kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
-kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
-
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "datetime" }
 
 compose-uiTooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "cmp" }
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "cmp" }
