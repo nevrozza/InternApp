@@ -17,14 +17,15 @@ import auth.usecases.ObserveAuthEventsUseCase
 import auth.usecases.ObserveAuthStateUseCase
 import auth.usecases.RefreshAuthStateUseCase
 import core.network.api.KtorClientPlugin
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val authModule = module {
 
-    single<KtorClientPlugin> { YandexAuthKtorPlugin(get(), get(), get()) }
+    single<KtorClientPlugin> { YandexAuthKtorPlugin(get(), get(), get(named("auth"))) }
 
     single<AuthTokenStorage> { AuthTokenStorage(get(), get()) }
-    single<AuthRemoteDataSource> { AuthRemoteDataSource(get()) }
+    single<AuthRemoteDataSource> { AuthRemoteDataSource(get(), get(named("auth"))) }
 
 
     single<AuthManager> { AuthManagerImpl(get()) }

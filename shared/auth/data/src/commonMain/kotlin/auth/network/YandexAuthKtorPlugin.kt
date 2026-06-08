@@ -1,16 +1,22 @@
 package auth.network
 
 import auth.models.AuthEvent
+import auth.network.dto.YandexTokenResponse
 import auth.repositories.AuthManager
 import auth.storage.AuthTokenStorage
 import core.network.api.KtorClientPlugin
+import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
+import io.ktor.client.call.body
 import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.request.forms.submitForm
+import io.ktor.http.Parameters
+import utils.config.AppConfig
 
 class YandexAuthKtorPlugin(
     private val tokenStorage: AuthTokenStorage,
     private val authManager: AuthManager,
-    private val authRemoteDataSource: AuthRemoteDataSource,
+    private val authHc: HttpClient
 ) : KtorClientPlugin {
     override fun install(config: HttpClientConfig<*>) {
         config.install(Auth) {
@@ -31,7 +37,14 @@ class YandexAuthKtorPlugin(
                         ?: return@refreshTokens null
 
                     runCatching {
-                        authRemoteDataSource.refreshToken(refreshToken)
+                        authHc.submitForm(
+                            url = "https://oauth.yandex.ru/token",
+                            formParameters = Parameters.build {
+                                append("grant_type", "refresh_token")
+                                append("client_id", AppConfig.YandexOAuthConfig.clientId)
+                                append("refresh_token", refreshToken)
+                            }
+                        ).body<YandexTokenResponse>()
                     }.fold(
                         onSuccess = { tokens ->
                             tokenStorage.saveTokens(tokens)

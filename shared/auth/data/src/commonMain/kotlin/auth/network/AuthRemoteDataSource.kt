@@ -8,25 +8,14 @@ import io.ktor.http.Parameters
 import utils.config.AppConfig
 
 class AuthRemoteDataSource(
-    private val hc: HttpClient
+    private val hc: HttpClient,
+    private val authHc: HttpClient
 ) {
-
-    suspend fun refreshToken(refreshToken: String): YandexTokenResponse {
-        return hc.submitForm(
-            url = "https://oauth.yandex.ru/token",
-            formParameters = Parameters.build {
-                append("grant_type", "refresh_token")
-                append("client_id", AppConfig.YandexOAuthConfig.clientId)
-                append("refresh_token", refreshToken)
-            }
-        ).body<YandexTokenResponse>()
-    }
-
     suspend fun exchangeCode(
         code: String,
         codeVerifier: String,
     ): YandexTokenResponse {
-        return hc.submitForm(
+        return authHc.submitForm(
             url = "https://oauth.yandex.ru/token",
             formParameters = Parameters.build {
                 append("grant_type", "authorization_code")
