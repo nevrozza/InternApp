@@ -1,5 +1,6 @@
 plugins {
     id("data-storage")
+    id("data-network")
 }
 
 

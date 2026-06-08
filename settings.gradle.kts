@@ -40,8 +40,7 @@ include(":shared:root:presentation")
 include(":shared:root:compose")
 
 include(":shared:core:common")
-include(":shared:core:network:api")
-include(":shared:core:network:impl")
+include(":shared:core:network")
 include(":shared:core:storage:api")
 include(":shared:core:storage:impl")
 

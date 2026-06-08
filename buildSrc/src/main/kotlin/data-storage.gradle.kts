@@ -13,9 +13,9 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(libs.koin.core)
-            implementation(project(":shared:core:storage:api"))
-
             implementation(libs.kotlinx.coroutines)
+
+            implementation(project(":shared:core:storage:api"))
         }
     }
 }

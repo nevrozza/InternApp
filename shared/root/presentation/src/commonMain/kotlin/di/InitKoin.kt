@@ -6,6 +6,7 @@ import com.arkivanov.mvikotlin.logging.store.LoggingStoreFactory
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
 import core.common.PlatformConfig
 import core.storage.impl.coreStorageModule
+import core.network.coreNetworkModule
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
@@ -20,11 +21,10 @@ fun initKoin(
             listOf(
                 module {
                     single { platformConfig }
-
-
                     single<StoreFactory> { LoggingStoreFactory(DefaultStoreFactory()) }
                 },
 
+                coreNetworkModule,
                 coreStorageModule,
 
                 authModule,

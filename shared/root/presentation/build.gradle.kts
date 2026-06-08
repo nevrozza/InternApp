@@ -5,6 +5,7 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            implementation(projects.shared.core.network)
             implementation(projects.shared.core.storage.impl)
             implementation(projects.shared.auth.data)
 
