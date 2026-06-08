@@ -12,7 +12,6 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.shared.core.common)
             implementation(projects.shared.root.compose)
-            implementation(projects.shared.utils)
 
             implementation(libs.koin.core)
 
@@ -21,6 +20,11 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+            implementation(projects.shared.auth.domain)
+            implementation(projects.shared.auth.data)
+            implementation(projects.shared.utils.pure)
+            implementation(libs.ktor.server.core)
+            implementation(libs.ktor.server.cio)
         }
     }
 

@@ -20,7 +20,6 @@ object Config {
         private const val sharedNamespace = "$namespace.shared"
 
         fun namespace(module: String?): String {
-            print(module)
             val formattedModuleName = module?.let {
                 module.replace(":shared", "")
                     .replace(Regex("[:-]"), ".")

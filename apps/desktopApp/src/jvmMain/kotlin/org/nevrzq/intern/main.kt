@@ -11,10 +11,14 @@ import di.initKoin
 import root.RealRootComponent
 import root.RootScreen
 import com.arkivanov.decompose.extensions.compose.lifecycle.LifecycleController
+import org.nevrzq.intern.auth.desktopAuthCallbackServerModule
 
 fun main() {
 
-    initKoin(PlatformConfig())
+    initKoin(
+        platformConfig = PlatformConfig(),
+        platformModules = listOf(desktopAuthCallbackServerModule),
+    )
 
     val lifecycle = LifecycleRegistry()
 
