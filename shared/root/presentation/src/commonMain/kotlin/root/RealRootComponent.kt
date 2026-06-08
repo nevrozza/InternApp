@@ -36,10 +36,6 @@ class RealRootComponent(
                     logoutUseCase = get()
                 )
             )
-
-            Root.Config.Settings -> Root.Child.Settings(
-                ""
-            )
         }
 
 }
