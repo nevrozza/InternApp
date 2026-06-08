@@ -12,6 +12,7 @@ import auth.repositories.YandexAuthRepositoryImpl
 import auth.repositories.YandexOAuthUrlProvider
 import auth.repositories.YandexOAuthUrlProviderImpl
 import auth.storage.AuthTokenStorage
+import auth.usecases.GetYandexUserProfileUseCase
 import auth.usecases.LogoutUseCase
 import auth.usecases.ObserveAuthEventsUseCase
 import auth.usecases.ObserveAuthStateUseCase
@@ -41,6 +42,7 @@ val authModule = module {
     factory { ObserveAuthStateUseCase(get()) }
     factory { ObserveAuthEventsUseCase(get()) }
     factory { RefreshAuthStateUseCase(get()) }
+    factory { GetYandexUserProfileUseCase(get()) }
     factory { StartYandexOAuthCallbackServerUseCase(getOrNull() ?: NoOpYandexOAuthCallbackServer) }
     factory { StopYandexOAuthCallbackServerUseCase(getOrNull() ?: NoOpYandexOAuthCallbackServer) }
     factory { LogoutUseCase(get()) }

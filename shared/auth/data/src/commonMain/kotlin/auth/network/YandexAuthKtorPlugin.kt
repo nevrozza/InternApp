@@ -38,7 +38,7 @@ class YandexAuthKtorPlugin(
 
                     runCatching {
                         authHc.submitForm(
-                            url = "https://oauth.yandex.ru/token",
+                            url = AuthNetworkPaths.REFRESH_TOKEN,
                             formParameters = Parameters.build {
                                 append("grant_type", "refresh_token")
                                 append("client_id", AppConfig.YandexOAuthConfig.clientId)

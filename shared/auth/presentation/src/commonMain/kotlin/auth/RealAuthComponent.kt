@@ -7,6 +7,7 @@ import auth.mvi.AuthStore.Intent
 import auth.mvi.AuthStore.Label
 import auth.mvi.AuthStore.State
 import auth.repositories.YandexOAuthUrlProvider
+import auth.usecases.GetYandexUserProfileUseCase
 import auth.usecases.LogoutUseCase
 import auth.usecases.ObserveAuthEventsUseCase
 import auth.usecases.ObserveAuthStateUseCase
@@ -25,6 +26,7 @@ class RealAuthComponent(
     observeAuthStateUseCase: ObserveAuthStateUseCase,
     observeAuthEventsUseCase: ObserveAuthEventsUseCase,
     refreshAuthStateUseCase: RefreshAuthStateUseCase,
+    getYandexUserProfileUseCase: GetYandexUserProfileUseCase,
     startYandexOAuthCallbackServerUseCase: StartYandexOAuthCallbackServerUseCase,
     stopYandexOAuthCallbackServerUseCase: StopYandexOAuthCallbackServerUseCase,
     logoutUseCase: LogoutUseCase,
@@ -42,6 +44,7 @@ class RealAuthComponent(
                         observeAuthStateUseCase = observeAuthStateUseCase,
                         observeAuthEventsUseCase = observeAuthEventsUseCase,
                         refreshAuthStateUseCase = refreshAuthStateUseCase,
+                        getYandexUserProfileUseCase = getYandexUserProfileUseCase,
                         startYandexOAuthCallbackServerUseCase = startYandexOAuthCallbackServerUseCase,
                         stopYandexOAuthCallbackServerUseCase = stopYandexOAuthCallbackServerUseCase,
                         logoutUseCase = logoutUseCase,

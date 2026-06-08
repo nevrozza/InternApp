@@ -30,6 +30,7 @@ class RealRootComponent(
                     observeAuthEventsUseCase = get(),
                     observeAuthStateUseCase = get(),
                     refreshAuthStateUseCase = get(),
+                    getYandexUserProfileUseCase = get(),
                     startYandexOAuthCallbackServerUseCase = get(),
                     stopYandexOAuthCallbackServerUseCase = get(),
                     logoutUseCase = get()

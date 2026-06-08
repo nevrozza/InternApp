@@ -1,7 +1,9 @@
 package auth.repositories
 
 import auth.models.AuthEvent
+import auth.models.YandexUserProfile
 import auth.network.AuthRemoteDataSource
+import auth.network.dto.toDomain
 import auth.storage.AuthTokenStorage
 
 class YandexAuthRepositoryImpl(
@@ -49,6 +51,10 @@ class YandexAuthRepositoryImpl(
         return "OAuth callback received. You can close this tab."
     }
 
+    override suspend fun getUserProfile(): YandexUserProfile {
+        return authRemoteDataSource.getUserInfo().toDomain()
+    }
+
     private suspend fun oauthCallback(code: String, codeVerifier: String) {
         val tokens = authRemoteDataSource.exchangeCode(
             code = code,
@@ -59,3 +65,5 @@ class YandexAuthRepositoryImpl(
         authManager.refreshAuthState()
     }
 }
+
+

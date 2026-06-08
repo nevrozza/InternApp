@@ -6,7 +6,9 @@ import auth.mvi.AuthStore.Label
 import auth.mvi.AuthStore.Message
 import auth.mvi.AuthStore.State
 import auth.models.AuthEvent
+import auth.models.AuthState
 import auth.repositories.YandexOAuthUrlProvider
+import auth.usecases.GetYandexUserProfileUseCase
 import auth.usecases.LogoutUseCase
 import auth.usecases.ObserveAuthEventsUseCase
 import auth.usecases.ObserveAuthStateUseCase
@@ -14,13 +16,17 @@ import auth.usecases.RefreshAuthStateUseCase
 import auth.desktopServer.StartYandexOAuthCallbackServerUseCase
 import auth.desktopServer.StopYandexOAuthCallbackServerUseCase
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 internal class AuthExecutor(
     private val yandexOAuthUrlProvider: YandexOAuthUrlProvider,
     private val observeAuthStateUseCase: ObserveAuthStateUseCase,
     private val observeAuthEventsUseCase: ObserveAuthEventsUseCase,
     private val refreshAuthStateUseCase: RefreshAuthStateUseCase,
+    private val getYandexUserProfileUseCase: GetYandexUserProfileUseCase,
     private val startYandexOAuthCallbackServerUseCase: StartYandexOAuthCallbackServerUseCase,
     private val stopYandexOAuthCallbackServerUseCase: StopYandexOAuthCallbackServerUseCase,
     private val logoutUseCase: LogoutUseCase,
@@ -34,6 +40,11 @@ internal class AuthExecutor(
                 scope.launch {
                     observeAuthStateUseCase().collect { authState ->
                         dispatch(Message.AuthStateChanged(authState))
+                        if (authState == AuthState.Authorized) {
+                            withContext(Dispatchers.IO) {
+                                loadYandexProfile()
+                            }
+                        }
                     }
                 }
                 scope.launch {
@@ -49,30 +60,47 @@ internal class AuthExecutor(
 
     override fun executeIntent(intent: Intent) {
         when (intent) {
-            Intent.YandexLoginClicked -> {
-                scope.launch {
-                    val url = yandexOAuthUrlProvider.getUrl()
-                    if (url == null) {
-                        dispatch(Message.Error("Yandex OAuth is not configured for this platform"))
-                        return@launch
-                    }
+            Intent.YandexLoginClicked -> yandexLogin()
 
-                    dispatch(Message.AuthorizationStarted)
-                    startYandexOAuthCallbackServerUseCase()
-                    publish(Label.OpenYandexOAuth(url))
-                }
-            }
-
-            Intent.LogoutClicked -> {
-                stopYandexOAuthCallbackServerUseCase()
+            Intent.LogoutClicked -> scope.launch(Dispatchers.IO) {
                 logoutUseCase()
+                stopYandexOAuthCallbackServerUseCase()
             }
 
-            Intent.CancelAuthorizationClicked -> {
-                stopYandexOAuthCallbackServerUseCase()
-                refreshAuthStateUseCase()
+            Intent.CancelAuthorizationClicked -> scope.launch {
+                withContext(Dispatchers.IO) {
+                    refreshAuthStateUseCase()
+                    stopYandexOAuthCallbackServerUseCase()
+                }
                 publish(Label.CloseOAuth)
             }
+        }
+    }
+
+    private fun yandexLogin() {
+        if (state().status !is AuthStore.Status.Authorized) {
+            scope.launch {
+                val url = yandexOAuthUrlProvider.getUrl()
+                if (url == null) {
+                    dispatch(Message.Error("Yandex OAuth is not configured for this platform"))
+                    return@launch
+                }
+                dispatch(Message.AuthorizationStarted)
+                withContext(Dispatchers.IO) {
+                    startYandexOAuthCallbackServerUseCase()
+                }
+                publish(Label.OpenYandexOAuth(url))
+            }
+        }
+    }
+
+    private suspend fun loadYandexProfile() {
+        runCatching {
+            getYandexUserProfileUseCase()
+        }.onSuccess { profile ->
+            dispatch(Message.ProfileLoaded(profile))
+        }.onFailure { error ->
+            dispatch(Message.Error(error.message ?: "Unable to load Yandex profile"))
         }
     }
 }
