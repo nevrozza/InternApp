@@ -17,6 +17,7 @@ kotlin {
 
             implementation(libs.compose.runtime.annotation)
 
+            implementation(libs.kotlinx.coroutines)
 
             implementation(project(":shared:utils"))
         }

@@ -1,5 +1,6 @@
 @file:OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalWasmDsl::class)
 
+import com.android.build.api.withAndroid
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
@@ -24,7 +25,8 @@ kotlin {
 
     applyDefaultHierarchyTemplate {
         common {
-            group("notIOS") {
+            group("java") {
+                withAndroid()
                 withAndroidTarget()
                 withJvm()
             }

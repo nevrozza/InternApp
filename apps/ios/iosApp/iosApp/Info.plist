@@ -4,5 +4,17 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLName</key>
+            <string>org.nevrzq.intern.oauth</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>org.nevrzq.intern</string>
+            </array>
+        </dict>
+    </array>
 </dict>
 </plist>

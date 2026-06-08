@@ -19,9 +19,12 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.shared.core.common)
+            implementation(projects.shared.auth.domain)
             implementation(projects.shared.root.compose)
+            implementation(projects.shared.utils.pure)
             implementation(projects.shared.utils)
 
+            implementation(libs.koin.core)
             implementation(libs.compose.components.resources)
         }
     }

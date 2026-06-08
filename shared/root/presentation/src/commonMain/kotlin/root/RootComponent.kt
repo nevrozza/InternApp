@@ -1,5 +1,6 @@
 package root
 
+import auth.AuthComponent
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.essenty.backhandler.BackHandlerOwner
@@ -25,7 +26,7 @@ interface Root {
 
     sealed interface Child {
         data class Files(
-            val component: Any
+            val component: AuthComponent
         ) : Child
 
         data class Settings(
