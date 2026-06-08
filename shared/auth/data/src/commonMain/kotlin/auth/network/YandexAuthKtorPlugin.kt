@@ -6,8 +6,6 @@ import auth.storage.AuthTokenStorage
 import core.network.api.KtorClientPlugin
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.plugins.auth.Auth
-import io.ktor.client.plugins.auth.providers.BearerTokens
-import io.ktor.client.plugins.auth.providers.bearer
 
 class YandexAuthKtorPlugin(
     private val tokenStorage: AuthTokenStorage,
@@ -16,13 +14,13 @@ class YandexAuthKtorPlugin(
 ) : KtorClientPlugin {
     override fun install(config: HttpClientConfig<*>) {
         config.install(Auth) {
-            bearer {
+            oauth {
                 loadTokens {
                     val accessToken = tokenStorage.getAccessToken()
                     val refreshToken = tokenStorage.getRefreshToken()
 
                     if (accessToken != null && refreshToken != null) {
-                        BearerTokens(accessToken, refreshToken)
+                        OAuthTokens(accessToken, refreshToken)
                     } else {
                         null
                     }
@@ -37,9 +35,9 @@ class YandexAuthKtorPlugin(
                     }.fold(
                         onSuccess = { tokens ->
                             tokenStorage.saveTokens(tokens)
-                            BearerTokens(
+                            OAuthTokens(
                                 accessToken = tokens.accessToken,
-                                refreshToken = tokens.refreshToken,
+                                refreshToken = tokens.refreshToken
                             )
                         },
                         onFailure = {
