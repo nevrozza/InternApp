@@ -12,7 +12,9 @@ interface DiskResourceDao {
         """
         SELECT * FROM disk_resources
         WHERE parentPath = :parentPath
-        ORDER BY type ASC, name COLLATE NOCASE ASC
+        ORDER BY
+            CASE WHEN type = 'DIRECTORY' THEN 0 ELSE 1 END,
+            name COLLATE NOCASE ASC
         """,
     )
     fun observeByParentPath(parentPath: String): Flow<List<DiskResourceEntity>>
