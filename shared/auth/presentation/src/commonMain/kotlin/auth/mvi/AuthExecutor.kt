@@ -71,7 +71,7 @@ internal class AuthExecutor(
                     refreshAuthStateUseCase()
                     stopYandexOAuthCallbackServerUseCase()
                 }
-                publish(Label.CloseOAuth)
+                dispatch(Message.AuthStateChanged(AuthState.Unauthorized))
             }
         }
     }

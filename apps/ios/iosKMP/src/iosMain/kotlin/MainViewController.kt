@@ -8,29 +8,30 @@ import di.initKoin
 import org.koin.dsl.module
 import root.RealRootComponent
 import root.RootComponent
-import root.RootScreen
 import utils.config.AppConfig
 
 @Suppress("unused", "FunctionName")
 fun MainViewController(): UIViewController {
-    return ComposeUIViewController {
-        initKoin(
-            platformConfig = PlatformConfig(),
-            platformModules = listOf(
-                module {
-                    single<YandexOAuthRedirectUriProvider> {
-                        YandexOAuthRedirectUriProvider { AppConfig.YandexOAuthConfig.Mobile.redirectUri }
-                    }
+
+    initKoin(
+        platformConfig = PlatformConfig(),
+        platformModules = listOf(
+            module {
+                single<YandexOAuthRedirectUriProvider> {
+                    YandexOAuthRedirectUriProvider { AppConfig.YandexOAuthConfig.Mobile.redirectUri }
                 }
-            )
+            }
         )
+    )
 
-        val rootComponent: RootComponent = RealRootComponent(
-            DefaultComponentContext(
-                ApplicationLifecycle()
-            )
+    val rootComponent: RootComponent = RealRootComponent(
+        DefaultComponentContext(
+            ApplicationLifecycle()
         )
+    )
 
-        RootScreen(rootComponent)
+    return ComposeUIViewController {
+
+        App(rootComponent)
     }
 }

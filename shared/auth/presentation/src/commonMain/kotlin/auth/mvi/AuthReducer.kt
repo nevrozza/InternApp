@@ -11,7 +11,7 @@ object AuthReducer : Reducer<AuthStore.State, Message> {
             is Message.AuthStateChanged -> copy(status = msg.authState.toStatus())
             is Message.ProfileLoaded -> copy(status = Status.Authorized(profileData = msg.profile))
             Message.AuthorizationStarted -> copy(status = Status.InProcess)
-            is Message.Error -> copy(status = Status.Error(msg.msg))
+            is Message.Error -> copy(status = Status.Error(msg.msg ?: "Unknown Error"))
         }
 }
 

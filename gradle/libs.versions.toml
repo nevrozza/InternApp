@@ -7,6 +7,7 @@ androidx-activity = "1.12.3"
 
 coroutines = "1.11.0"
 
+coil = "3.4.0"
 material3 = "1.11.0-alpha07"
 stability = "0.6.6"
 
@@ -29,6 +30,10 @@ androidx-security-crypto = "1.1.0"
 lifecycle-common-jvm = "2.10.0"
 
 [libraries]
+# coil
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
+
 decompose-core = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 decompose-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
 
@@ -93,7 +98,7 @@ settings-core = { module = "com.russhwolf:multiplatform-settings", version.ref =
 androidx-lifecycle-common-jvm = { group = "androidx.lifecycle", name = "lifecycle-common-jvm", version.ref = "lifecycle-common-jvm" }
 
 [bundles]
-
+coil = ["coil-compose", "coil-network-ktor3"]
 
 [plugins]
 androidApplication = { id = "com.android.application" }

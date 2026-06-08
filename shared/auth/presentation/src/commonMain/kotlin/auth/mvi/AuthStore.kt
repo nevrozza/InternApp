@@ -17,7 +17,7 @@ interface AuthStore : Store<AuthStore.Intent, AuthStore.State, AuthStore.Label> 
 
         data object Unauthorized : Status
         data object InProcess : Status
-        data class Error(val msg: String?) : Status
+        data class Error(val msg: String) : Status
     }
 
 
@@ -40,7 +40,6 @@ interface AuthStore : Store<AuthStore.Intent, AuthStore.State, AuthStore.Label> 
 
     sealed interface Label {
         data class OpenYandexOAuth(val url: String) : Label
-        data object CloseOAuth : Label
     }
 
     sealed interface Action {

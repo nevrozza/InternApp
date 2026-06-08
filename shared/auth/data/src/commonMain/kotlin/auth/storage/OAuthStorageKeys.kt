@@ -10,7 +10,6 @@ internal class OAuthStorageKeys(
     val refreshToken = "$oauthPrefix.refresh_token"
     val tokenType = "$oauthPrefix.token_type"
     val expiresInSeconds = "$oauthPrefix.expires_in_seconds"
-    val createdAtMillis = "$oauthPrefix.created_at_millis"
     val codeVerifier = "$oauthPrefix.code_verifier"
 
     val profileDisplayName = "$profilePrefix.display_name"

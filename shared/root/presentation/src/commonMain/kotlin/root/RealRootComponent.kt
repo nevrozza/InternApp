@@ -14,7 +14,7 @@ class RealRootComponent(
     serializer = Root.Config.serializer()
 ) {
     override fun initialConfig(): List<Root.Config> {
-        return listOf(Root.Config.Files)
+        return listOf(Root.Config.Disk)
     }
 
     override fun child(
@@ -22,7 +22,7 @@ class RealRootComponent(
         childCtx: ComponentContext
     ): Root.Child =
         when (config) {
-            Root.Config.Files -> Root.Child.Files(
+            Root.Config.Disk -> Root.Child.Disk(
                 RealAuthComponent(
                     componentContext = childCtx,
                     storeFactory = get(),
@@ -35,10 +35,6 @@ class RealRootComponent(
                     stopYandexOAuthCallbackServerUseCase = get(),
                     logoutUseCase = get()
                 )
-            )
-
-            Root.Config.Settings -> Root.Child.Settings(
-                ""
             )
         }
 
