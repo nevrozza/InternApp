@@ -21,4 +21,5 @@ data class DiskSyncOperationEntity(
     val path: String,
     val targetPath: String?,
     val state: String,
+    val lastError: String?,
 )

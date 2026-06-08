@@ -11,4 +11,5 @@ data class SyncOperation(
     val path: DiskPath,
     val targetPath: DiskPath?,
     val state: SyncOperationState,
+    val lastError: String?,
 )

@@ -36,8 +36,15 @@ interface DiskSyncOperationDao {
     @Upsert
     suspend fun upsert(operation: DiskSyncOperationEntity)
 
-    @Query("UPDATE disk_sync_out SET state = :state WHERE id = :id")
+    @Query("UPDATE disk_sync_out SET state = :state, lastError = NULL WHERE id = :id")
     suspend fun updateState(id: String, state: String)
+
+    @Query("UPDATE disk_sync_out SET state = :state, lastError = :lastError WHERE id = :id")
+    suspend fun updateFailure(
+        id: String,
+        state: String,
+        lastError: String?,
+    )
 
     @Query("DELETE FROM disk_sync_out WHERE id = :id")
     suspend fun deleteById(id: String)
