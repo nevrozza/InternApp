@@ -12,23 +12,25 @@ import utils.config.AppConfig
 
 @Suppress("unused", "FunctionName")
 fun MainViewController(): UIViewController {
-    return ComposeUIViewController {
-        initKoin(
-            platformConfig = PlatformConfig(),
-            platformModules = listOf(
-                module {
-                    single<YandexOAuthRedirectUriProvider> {
-                        YandexOAuthRedirectUriProvider { AppConfig.YandexOAuthConfig.Mobile.redirectUri }
-                    }
-                }
-            )
-        )
 
-        val rootComponent: RootComponent = RealRootComponent(
-            DefaultComponentContext(
-                ApplicationLifecycle()
-            )
+    initKoin(
+        platformConfig = PlatformConfig(),
+        platformModules = listOf(
+            module {
+                single<YandexOAuthRedirectUriProvider> {
+                    YandexOAuthRedirectUriProvider { AppConfig.YandexOAuthConfig.Mobile.redirectUri }
+                }
+            }
         )
+    )
+
+    val rootComponent: RootComponent = RealRootComponent(
+        DefaultComponentContext(
+            ApplicationLifecycle()
+        )
+    )
+
+    return ComposeUIViewController {
 
         App(rootComponent)
     }
