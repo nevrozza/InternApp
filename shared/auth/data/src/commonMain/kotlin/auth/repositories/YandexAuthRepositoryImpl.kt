@@ -62,25 +62,22 @@ class YandexAuthRepositoryImpl(
             emit(cachedProfile)
         }
 
-        profileSyncMutex.withLock {
+        val freshProfile = profileSyncMutex.withLock {
             if (wasProfileSyncedInCurrentSession) {
-                return@flow
+                return@withLock tokenStorage.getProfile()
             }
-
             runCatching {
                 authRemoteDataSource.getUserInfo()
                     .toDomain()
                     .also(tokenStorage::saveProfile)
-            }.onSuccess { freshProfile ->
+            }.onSuccess {
                 wasProfileSyncedInCurrentSession = true
-                if (freshProfile != cachedProfile) {
-                    emit(freshProfile)
-                }
-            }.onFailure { error ->
-                if (cachedProfile == null) {
-                    throw error
-                }
+            }.getOrElse { error ->
+                tokenStorage.getProfile() ?: throw error
             }
+        }
+        if (freshProfile != null && freshProfile != cachedProfile) {
+            emit(freshProfile)
         }
     }
 

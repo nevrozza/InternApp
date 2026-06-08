@@ -4,7 +4,6 @@ import auth.models.YandexUserProfile
 import auth.network.dto.YandexTokenResponse
 import core.storage.keyvalue.EncryptedKeyValueStorage
 import core.storage.keyvalue.PlainKeyValueStorage
-import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 class AuthTokenStorage(
@@ -20,7 +19,6 @@ class AuthTokenStorage(
         encrypted[keys.refreshToken] = data.refreshToken
         kv[keys.tokenType] = data.tokenType
         kv[keys.expiresInSeconds] = data.expiresIn.toString()
-        kv[keys.createdAtMillis] = Clock.System.now().toEpochMilliseconds().toString()
     }
 
     fun getAccessToken(): String? = encrypted[keys.accessToken]
@@ -61,7 +59,6 @@ class AuthTokenStorage(
         encrypted.remove(keys.codeVerifier)
         kv.remove(keys.tokenType)
         kv.remove(keys.expiresInSeconds)
-        kv.remove(keys.createdAtMillis)
         clearProfile()
     }
 }

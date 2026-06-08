@@ -26,6 +26,9 @@ fun AuthDebugContent(
     component: AuthComponent,
     modifier: Modifier = Modifier,
 ) {
+
+    AuthWidget(component)
+
     val state by component.model.subscribeAsState()
     val labels = remember { mutableStateListOf<String>() }
     val uriHandler = LocalUriHandler.current
