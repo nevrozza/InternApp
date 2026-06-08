@@ -38,7 +38,7 @@ internal fun RootScreen(
         )
     ) {
         when (val child = it.instance) {
-            is Root.Child.Files -> {
+            is Root.Child.Disk -> {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Column(Modifier.fillMaxSize().safeDrawingPadding()) {
                         AuthWidget(
@@ -49,7 +49,7 @@ internal fun RootScreen(
                                 .padding(horizontal = Paddings.medium, vertical = Paddings.semiBig).animateContentSize(),
                             component = child.authComponent
                         )
-                        Text("Files")
+                        Text("Disk")
                     }
                 }
             }

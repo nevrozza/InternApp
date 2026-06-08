@@ -18,11 +18,11 @@ interface Root {
     @Serializable
     sealed interface Config {
         @Serializable
-        data object Files : Config
+        data object Disk : Config
     }
 
     sealed interface Child {
-        data class Files(
+        data class Disk(
             val authComponent: AuthComponent
         ) : Child
     }
