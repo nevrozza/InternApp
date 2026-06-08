@@ -9,6 +9,8 @@ import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.call.body
 import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.request.forms.submitForm
 import io.ktor.http.Parameters
 import utils.config.AppConfig
@@ -20,13 +22,13 @@ class YandexAuthKtorPlugin(
 ) : KtorClientPlugin {
     override fun install(config: HttpClientConfig<*>) {
         config.install(Auth) {
-            oauth {
+            bearer {
                 loadTokens {
                     val accessToken = tokenStorage.getAccessToken()
                     val refreshToken = tokenStorage.getRefreshToken()
 
                     if (accessToken != null && refreshToken != null) {
-                        OAuthTokens(accessToken, refreshToken)
+                        BearerTokens(accessToken, refreshToken)
                     } else {
                         null
                     }
@@ -48,7 +50,7 @@ class YandexAuthKtorPlugin(
                     }.fold(
                         onSuccess = { tokens ->
                             tokenStorage.saveTokens(tokens)
-                            OAuthTokens(
+                            BearerTokens(
                                 accessToken = tokens.accessToken,
                                 refreshToken = tokens.refreshToken
                             )
