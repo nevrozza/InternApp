@@ -11,6 +11,7 @@ import org.koin.dsl.module
 import root.RealRootComponent
 import root.RootComponent
 import root.RootScreen
+import utils.config.AppConfig
 
 @Suppress("unused", "FunctionName")
 fun MainViewController(): UIViewController {
@@ -21,7 +22,7 @@ fun MainViewController(): UIViewController {
                 module {
                     single<YandexOAuthUrlProvider> {
                         // афигеть синтаксис
-                        YandexOAuthUrlProvider { null }
+                        YandexOAuthUrlProvider { AppConfig.YandexOAuthConfig.Mobile.authUrl }
                     }
                 }
             )
