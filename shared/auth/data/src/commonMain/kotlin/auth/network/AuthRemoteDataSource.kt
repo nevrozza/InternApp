@@ -10,6 +10,18 @@ import utils.config.AppConfig
 class AuthRemoteDataSource(
     private val hc: HttpClient
 ) {
+
+    suspend fun refreshToken(refreshToken: String): YandexTokenResponse {
+        return hc.submitForm(
+            url = "https://oauth.yandex.ru/token",
+            formParameters = Parameters.build {
+                append("grant_type", "refresh_token")
+                append("client_id", AppConfig.YandexOAuthConfig.clientId)
+                append("refresh_token", refreshToken)
+            }
+        ).body<YandexTokenResponse>()
+    }
+
     suspend fun exchangeCode(
         code: String,
         codeVerifier: String,

@@ -4,6 +4,7 @@ import auth.desktopServer.StartYandexOAuthCallbackServerUseCase
 import auth.desktopServer.StopYandexOAuthCallbackServerUseCase
 import auth.desktopServer.YandexOAuthCallbackServer
 import auth.network.AuthRemoteDataSource
+import auth.network.YandexAuthKtorPlugin
 import auth.repositories.AuthManager
 import auth.repositories.AuthManagerImpl
 import auth.repositories.YandexAuthRepository
@@ -15,9 +16,13 @@ import auth.usecases.LogoutUseCase
 import auth.usecases.ObserveAuthEventsUseCase
 import auth.usecases.ObserveAuthStateUseCase
 import auth.usecases.RefreshAuthStateUseCase
+import core.network.api.KtorClientPlugin
 import org.koin.dsl.module
 
 val authModule = module {
+
+    single<KtorClientPlugin> { YandexAuthKtorPlugin(get(), get(), get()) }
+
     single<AuthTokenStorage> { AuthTokenStorage(get(), get()) }
     single<AuthRemoteDataSource> { AuthRemoteDataSource(get()) }
 

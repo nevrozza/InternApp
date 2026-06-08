@@ -8,7 +8,8 @@ import org.koin.dsl.module
 val coreNetworkModule = module {
     single<HttpClient> {
         getHttpClient(
-            CIO
+            CIO,
+            diPlugins = getAll()
         )
     }
 }

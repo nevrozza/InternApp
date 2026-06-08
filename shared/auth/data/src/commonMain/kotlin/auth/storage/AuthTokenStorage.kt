@@ -23,6 +23,7 @@ class AuthTokenStorage(
     }
 
     fun getAccessToken(): String? = encrypted[keys.accessToken]
+    fun getRefreshToken(): String? = encrypted[keys.refreshToken]
 
     fun saveCodeVerifier(codeVerifier: String) {
         encrypted[keys.codeVerifier] = codeVerifier

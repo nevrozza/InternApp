@@ -1,5 +1,6 @@
 package core.network.ktor
 
+import core.network.api.KtorClientPlugin
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngineConfig
 import io.ktor.client.engine.HttpClientEngineFactory
@@ -16,7 +17,8 @@ import kotlinx.serialization.json.Json
 
 @OptIn(ExperimentalSerializationApi::class)
 fun getHttpClient(
-    engineFactory: HttpClientEngineFactory<HttpClientEngineConfig>
+    engineFactory: HttpClientEngineFactory<HttpClientEngineConfig>,
+    diPlugins: List<KtorClientPlugin>,
 ) =
     HttpClient(engineFactory) {
         install(Logging) {
@@ -37,6 +39,10 @@ fun getHttpClient(
 
         install(DefaultRequest) {
             this.contentType(ContentType.Application.Json)
+        }
+
+        diPlugins.forEach { plugin ->
+            plugin.install(this)
         }
 
         expectSuccess = true
