@@ -24,7 +24,7 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
 
         }
-        named("notIOSMain").dependencies {
+        named("javaMain").dependencies {
             implementation(libs.compose.uiTooling)
         }
     }

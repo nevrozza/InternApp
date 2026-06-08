@@ -2,11 +2,10 @@ package auth.repositories
 
 import auth.storage.AuthTokenStorage
 import io.ktor.http.URLBuilder
-import io.ktor.util.Digest
-import io.ktor.util.build
 import io.ktor.util.generateNonce
 import io.ktor.utils.io.InternalAPI
 import utils.config.AppConfig
+import utils.crypto.Sha256
 import kotlin.io.encoding.Base64
 
 internal class YandexOAuthUrlProviderImpl(
@@ -36,9 +35,9 @@ internal class YandexOAuthUrlProviderImpl(
 
 
     @OptIn(InternalAPI::class)
-    private suspend fun createCodeChallenge(codeVerifier: String): String =
-        Digest("SHA-256")
-            .build(codeVerifier.encodeToByteArray())
+    private fun createCodeChallenge(codeVerifier: String): String =
+        Sha256
+            .digest(codeVerifier.encodeToByteArray())
             .base64Url()
 
     private fun ByteArray.base64Url(): String =
