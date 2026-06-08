@@ -8,6 +8,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.shared.auth.domain)
+            implementation(projects.shared.utils.pure)
         }
     }
 }

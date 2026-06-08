@@ -1,7 +1,5 @@
-package org.nevrzq.intern
-
 import androidx.compose.ui.window.ComposeUIViewController
-import auth.repositories.YandexOAuthUrlProvider
+import auth.repositories.YandexOAuthRedirectUriProvider
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.ApplicationLifecycle
 import core.common.PlatformConfig
@@ -20,9 +18,8 @@ fun MainViewController(): UIViewController {
             platformConfig = PlatformConfig(),
             platformModules = listOf(
                 module {
-                    single<YandexOAuthUrlProvider> {
-                        // афигеть синтаксис
-                        YandexOAuthUrlProvider { AppConfig.YandexOAuthConfig.Mobile.authUrl }
+                    single<YandexOAuthRedirectUriProvider> {
+                        YandexOAuthRedirectUriProvider { AppConfig.YandexOAuthConfig.Mobile.redirectUri }
                     }
                 }
             )

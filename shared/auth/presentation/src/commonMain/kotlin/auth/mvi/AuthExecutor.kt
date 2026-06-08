@@ -50,15 +50,17 @@ internal class AuthExecutor(
     override fun executeIntent(intent: Intent) {
         when (intent) {
             Intent.YandexLoginClicked -> {
-                val url = yandexOAuthUrlProvider.getUrl()
-                if (url == null) {
-                    dispatch(Message.Error("Yandex OAuth is not configured for this platform"))
-                    return
-                }
+                scope.launch {
+                    val url = yandexOAuthUrlProvider.getUrl()
+                    if (url == null) {
+                        dispatch(Message.Error("Yandex OAuth is not configured for this platform"))
+                        return@launch
+                    }
 
-                dispatch(Message.AuthorizationStarted)
-                startYandexOAuthCallbackServerUseCase()
-                publish(Label.OpenYandexOAuth(url))
+                    dispatch(Message.AuthorizationStarted)
+                    startYandexOAuthCallbackServerUseCase()
+                    publish(Label.OpenYandexOAuth(url))
+                }
             }
 
             Intent.LogoutClicked -> {

@@ -1,25 +1,35 @@
 package auth
 
+import auth.desktopServer.StartYandexOAuthCallbackServerUseCase
+import auth.desktopServer.StopYandexOAuthCallbackServerUseCase
+import auth.desktopServer.YandexOAuthCallbackServer
+import auth.network.AuthRemoteDataSource
 import auth.repositories.AuthManager
 import auth.repositories.AuthManagerImpl
 import auth.repositories.YandexAuthRepository
 import auth.repositories.YandexAuthRepositoryImpl
-import auth.desktopServer.YandexOAuthCallbackServer
+import auth.repositories.YandexOAuthUrlProvider
+import auth.repositories.YandexOAuthUrlProviderImpl
 import auth.storage.AuthTokenStorage
 import auth.usecases.LogoutUseCase
 import auth.usecases.ObserveAuthEventsUseCase
 import auth.usecases.ObserveAuthStateUseCase
 import auth.usecases.RefreshAuthStateUseCase
-import auth.desktopServer.StartYandexOAuthCallbackServerUseCase
-import auth.desktopServer.StopYandexOAuthCallbackServerUseCase
 import org.koin.dsl.module
 
 val authModule = module {
     single<AuthTokenStorage> { AuthTokenStorage(get(), get()) }
+    single<AuthRemoteDataSource> { AuthRemoteDataSource(get()) }
 
 
     single<AuthManager> { AuthManagerImpl(get()) }
-    single<YandexAuthRepository> { YandexAuthRepositoryImpl(get(), get()) }
+    single<YandexOAuthUrlProvider> {
+        YandexOAuthUrlProviderImpl(
+            redirectUriProvider = get(),
+            tokenStorage = get(),
+        )
+    }
+    single<YandexAuthRepository> { YandexAuthRepositoryImpl(get(), get(), get()) }
 
 
     factory { ObserveAuthStateUseCase(get()) }

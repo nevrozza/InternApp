@@ -1,11 +1,13 @@
 package auth.repositories
 
 import auth.models.AuthEvent
+import auth.network.AuthRemoteDataSource
 import auth.storage.AuthTokenStorage
 
 class YandexAuthRepositoryImpl(
     private val tokenStorage: AuthTokenStorage,
-    private val authManager: AuthManager
+    private val authManager: AuthManager,
+    private val authRemoteDataSource: AuthRemoteDataSource,
 ) : YandexAuthRepository {
     override suspend fun handleOAuthCallback(parameters: Map<String, String>): String {
 
@@ -26,15 +28,34 @@ class YandexAuthRepositoryImpl(
 
         println("CODE: $code")
 
-        oauthCallback(
-            code
-        )
+        val codeVerifier = tokenStorage.takeCodeVerifier()
+        if (codeVerifier == null) {
+            val description = "OAuth code verifier is missing"
+            authManager.sendEvent(AuthEvent.Error(description))
+            return description
+        }
+
+        runCatching {
+            oauthCallback(
+                code = code,
+                codeVerifier = codeVerifier,
+            )
+        }.onFailure { error ->
+            val description = error.message ?: "OAuth token exchange failed"
+            authManager.sendEvent(AuthEvent.Error(description))
+            return description
+        }
 
         return "OAuth callback received. You can close this tab."
     }
 
-    private suspend fun oauthCallback(code: String) {
-        // TODO: exchange callback.code for tokens, then save tokens and refresh auth state.
+    private suspend fun oauthCallback(code: String, codeVerifier: String) {
+        val tokens = authRemoteDataSource.exchangeCode(
+            code = code,
+            codeVerifier = codeVerifier,
+        )
+
+        tokenStorage.saveTokens(tokens)
         authManager.refreshAuthState()
     }
 }

@@ -1,7 +1,7 @@
 package org.nevrzq.intern.auth
 
 import auth.desktopServer.YandexOAuthCallbackServer
-import auth.repositories.YandexOAuthUrlProvider
+import auth.repositories.YandexOAuthRedirectUriProvider
 import org.koin.dsl.module
 import utils.config.AppConfig
 
@@ -12,9 +12,9 @@ val desktopAuthCallbackServerModule = module {
         )
     }
 
-    single<YandexOAuthUrlProvider> {
-        YandexOAuthUrlProvider {
-            AppConfig.YandexOAuthConfig.Desktop.authUrl
+    single<YandexOAuthRedirectUriProvider> {
+        YandexOAuthRedirectUriProvider {
+            AppConfig.YandexOAuthConfig.Desktop.redirectUri
         }
     }
 }

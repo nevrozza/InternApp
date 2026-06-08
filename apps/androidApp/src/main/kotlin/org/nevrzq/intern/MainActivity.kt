@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.lifecycleScope
-import auth.repositories.YandexOAuthUrlProvider
+import auth.repositories.YandexOAuthRedirectUriProvider
 import com.arkivanov.decompose.retainedComponent
 import core.common.PlatformConfig
 import di.initKoin
@@ -25,8 +25,8 @@ class MainActivity : ComponentActivity() {
             platformConfig = PlatformConfig(context = applicationContext),
             platformModules = listOf(
                 module {
-                    single<YandexOAuthUrlProvider> {
-                        YandexOAuthUrlProvider { AppConfig.YandexOAuthConfig.Mobile.authUrl }
+                    single<YandexOAuthRedirectUriProvider> {
+                        YandexOAuthRedirectUriProvider { AppConfig.YandexOAuthConfig.Mobile.redirectUri }
                     }
                 }
             )
