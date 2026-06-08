@@ -1,5 +1,6 @@
 package auth.storage
 
+import auth.models.YandexUserProfile
 import auth.network.dto.YandexTokenResponse
 import core.storage.keyvalue.EncryptedKeyValueStorage
 import core.storage.keyvalue.PlainKeyValueStorage
@@ -34,11 +35,25 @@ class AuthTokenStorage(
             encrypted.remove(keys.codeVerifier)
         }
 
-    fun saveProfile(data: Any) {
-
+    fun saveProfile(data: YandexUserProfile) {
+        kv[keys.profileDisplayName] = data.displayName
+        data.avatarUrl?.let { avatarUrl ->
+            kv[keys.profileAvatarUrl] = avatarUrl
+        } ?: kv.remove(keys.profileAvatarUrl)
     }
 
-    fun getProfile(): Any? = null
+    fun getProfile(): YandexUserProfile? {
+        val displayName = kv[keys.profileDisplayName] ?: return null
+        return YandexUserProfile(
+            displayName = displayName,
+            avatarUrl = kv[keys.profileAvatarUrl],
+        )
+    }
+
+    fun clearProfile() {
+        kv.remove(keys.profileDisplayName)
+        kv.remove(keys.profileAvatarUrl)
+    }
 
     fun clear() {
         encrypted.remove(keys.accessToken)
@@ -47,5 +62,6 @@ class AuthTokenStorage(
         kv.remove(keys.tokenType)
         kv.remove(keys.expiresInSeconds)
         kv.remove(keys.createdAtMillis)
+        clearProfile()
     }
 }

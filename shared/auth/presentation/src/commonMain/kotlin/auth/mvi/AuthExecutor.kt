@@ -16,6 +16,7 @@ import auth.usecases.RefreshAuthStateUseCase
 import auth.desktopServer.StartYandexOAuthCallbackServerUseCase
 import auth.desktopServer.StopYandexOAuthCallbackServerUseCase
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
@@ -41,9 +42,7 @@ internal class AuthExecutor(
                     observeAuthStateUseCase().collect { authState ->
                         dispatch(Message.AuthStateChanged(authState))
                         if (authState == AuthState.Authorized) {
-                            withContext(Dispatchers.IO) {
-                                loadYandexProfile()
-                            }
+                            loadYandexProfile()
                         }
                     }
                 }
@@ -95,11 +94,13 @@ internal class AuthExecutor(
     }
 
     private suspend fun loadYandexProfile() {
-        runCatching {
-            getYandexUserProfileUseCase()
-        }.onSuccess { profile ->
-            dispatch(Message.ProfileLoaded(profile))
-        }.onFailure { error ->
+        try {
+            getYandexUserProfileUseCase().collect { profile ->
+                dispatch(Message.ProfileLoaded(profile))
+            }
+        } catch (error: CancellationException) {
+            throw error
+        } catch (error: Throwable) {
             dispatch(Message.Error(error.message ?: "Unable to load Yandex profile"))
         }
     }

@@ -5,12 +5,19 @@ import auth.models.YandexUserProfile
 import auth.network.AuthRemoteDataSource
 import auth.network.dto.toDomain
 import auth.storage.AuthTokenStorage
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class YandexAuthRepositoryImpl(
     private val tokenStorage: AuthTokenStorage,
     private val authManager: AuthManager,
     private val authRemoteDataSource: AuthRemoteDataSource,
 ) : YandexAuthRepository {
+    private val profileSyncMutex = Mutex()
+    private var wasProfileSyncedInCurrentSession: Boolean = false
+
     override suspend fun handleOAuthCallback(parameters: Map<String, String>): String {
 
         // https://yandex.ru/dev/id/doc/en/codes/code-url#code-response
@@ -27,8 +34,6 @@ class YandexAuthRepositoryImpl(
             authManager.sendEvent(AuthEvent.Error(description))
             return description
         }
-
-        println("CODE: $code")
 
         val codeVerifier = tokenStorage.takeCodeVerifier()
         if (codeVerifier == null) {
@@ -51,8 +56,32 @@ class YandexAuthRepositoryImpl(
         return "OAuth callback received. You can close this tab."
     }
 
-    override suspend fun getUserProfile(): YandexUserProfile {
-        return authRemoteDataSource.getUserInfo().toDomain()
+    override fun getUserProfile(): Flow<YandexUserProfile> = flow {
+        val cachedProfile = tokenStorage.getProfile()
+        if (cachedProfile != null) {
+            emit(cachedProfile)
+        }
+
+        profileSyncMutex.withLock {
+            if (wasProfileSyncedInCurrentSession) {
+                return@flow
+            }
+
+            runCatching {
+                authRemoteDataSource.getUserInfo()
+                    .toDomain()
+                    .also(tokenStorage::saveProfile)
+            }.onSuccess { freshProfile ->
+                wasProfileSyncedInCurrentSession = true
+                if (freshProfile != cachedProfile) {
+                    emit(freshProfile)
+                }
+            }.onFailure { error ->
+                if (cachedProfile == null) {
+                    throw error
+                }
+            }
+        }
     }
 
     private suspend fun oauthCallback(code: String, codeVerifier: String) {
@@ -62,8 +91,8 @@ class YandexAuthRepositoryImpl(
         )
 
         tokenStorage.saveTokens(tokens)
+        tokenStorage.clearProfile()
+        wasProfileSyncedInCurrentSession = false
         authManager.refreshAuthState()
     }
 }
-
-
