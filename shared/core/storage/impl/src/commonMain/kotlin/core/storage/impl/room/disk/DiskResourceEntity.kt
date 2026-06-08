@@ -1,4 +1,4 @@
-package core.storage.impl.database.disk
+package core.storage.impl.room.disk
 
 import androidx.room.Entity
 import androidx.room.Index

@@ -1,4 +1,4 @@
-package core.storage.impl.database
+package core.storage.impl.room
 
 import core.common.PlatformConfig
 import org.koin.dsl.module

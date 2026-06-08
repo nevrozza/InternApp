@@ -1,4 +1,4 @@
-package core.storage.impl.database
+package core.storage.impl.room
 
 import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver

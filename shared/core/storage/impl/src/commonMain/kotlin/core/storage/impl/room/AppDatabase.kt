@@ -1,13 +1,13 @@
-package core.storage.impl.database
+package core.storage.impl.room
 
 import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
-import core.storage.impl.database.disk.DiskResourceDao
-import core.storage.impl.database.disk.DiskResourceEntity
-import core.storage.impl.database.disk.DiskSyncOperationDao
-import core.storage.impl.database.disk.DiskSyncOperationEntity
+import core.storage.impl.room.disk.DiskResourceDao
+import core.storage.impl.room.disk.DiskResourceEntity
+import core.storage.impl.room.disk.DiskSyncOperationDao
+import core.storage.impl.room.disk.DiskSyncOperationEntity
 
 @Database(
     entities = [

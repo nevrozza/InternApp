@@ -1,4 +1,4 @@
-package core.storage.impl.database
+package core.storage.impl.room
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -21,6 +21,6 @@ internal actual fun getAppDatabaseBuilder(
     )?.path.orEmpty()
 
     return Room.databaseBuilder<AppDatabase>(
-        name = "$documentsDirectory/$DATABASE_NAME",
+        name = "$documentsDirectory/${DATABASE_NAME}",
     )
 }

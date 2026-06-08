@@ -1,6 +1,6 @@
 package core.storage.impl
 
-import core.storage.impl.database.roomModule
+import core.storage.impl.room.roomModule
 import core.storage.impl.keyvalue.settingsModule
 import org.koin.dsl.module
 
