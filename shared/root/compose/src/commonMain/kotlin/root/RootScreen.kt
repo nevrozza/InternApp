@@ -3,7 +3,6 @@ package root
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,33 +17,31 @@ import com.arkivanov.decompose.extensions.compose.subscribeAsState
 
 @OptIn(ExperimentalDecomposeApi::class)
 @Composable
-fun RootScreen(
+internal fun RootScreen(
     component: RootComponent
 ) {
     val stack by component.stack.subscribeAsState()
+    Children(
+        stack = stack,
+        animation = predictiveBackAnimation(
+            backHandler = component.backHandler,
+            fallbackAnimation = stackAnimation(),
+            onBack = component::onBackClicked
+        )
+    ) {
+        when (val child = it.instance) {
+            is Root.Child.Files -> {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Column {
+                        Text("Files")
 
-    Surface {
-        Children(
-            stack = stack,
-            animation = predictiveBackAnimation(
-                backHandler = component.backHandler,
-                fallbackAnimation = stackAnimation(),
-                onBack = component::onBackClicked
-            )
-        ) {
-            when (val child = it.instance) {
-                is Root.Child.Files -> {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Column {
-                            Text("Files")
-
-                            AuthDebugContent(component = child.component)
-                        }
+                        AuthDebugContent(component = child.component)
                     }
                 }
-
-                is Root.Child.Settings -> Text("Settings")
             }
+
+            is Root.Child.Settings -> Text("Settings")
         }
     }
+
 }

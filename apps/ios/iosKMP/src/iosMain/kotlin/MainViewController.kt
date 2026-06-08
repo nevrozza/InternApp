@@ -8,7 +8,6 @@ import di.initKoin
 import org.koin.dsl.module
 import root.RealRootComponent
 import root.RootComponent
-import root.RootScreen
 import utils.config.AppConfig
 
 @Suppress("unused", "FunctionName")
@@ -31,6 +30,6 @@ fun MainViewController(): UIViewController {
             )
         )
 
-        RootScreen(rootComponent)
+        App(rootComponent)
     }
 }

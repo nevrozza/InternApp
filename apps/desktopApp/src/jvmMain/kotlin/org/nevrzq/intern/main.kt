@@ -9,7 +9,7 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import core.common.PlatformConfig
 import di.initKoin
 import root.RealRootComponent
-import root.RootScreen
+import App
 import com.arkivanov.decompose.extensions.compose.lifecycle.LifecycleController
 import org.nevrzq.intern.auth.desktopAuthCallbackServerModule
 
@@ -39,7 +39,7 @@ fun main() {
                 windowState = windowState,
                 windowInfo = LocalWindowInfo.current,
             )
-            RootScreen(root)
+            App(root)
         }
     }
 }

@@ -13,7 +13,7 @@ import org.koin.core.context.GlobalContext.stopKoin
 import org.koin.dsl.module
 import root.RealRootComponent
 import root.RootComponent
-import root.RootScreen
+import App
 import utils.config.AppConfig
 
 class MainActivity : ComponentActivity() {
@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
         screenSetup()
 
         setContent {
-            RootScreen(rootComponent)
+            App(rootComponent)
         }
     }
 
