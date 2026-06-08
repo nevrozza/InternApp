@@ -1,9 +1,9 @@
 package disk.repositories
 
-import disk.models.DiskPath
-import disk.models.LocalPath
 import disk.models.resources.DiskResource
 import kotlinx.coroutines.flow.Flow
+import utils.types.DiskPath
+import utils.types.LocalPath
 
 interface DiskRepository {
 

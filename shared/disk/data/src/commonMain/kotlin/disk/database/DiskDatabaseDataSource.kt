@@ -2,21 +2,25 @@ package disk.database
 
 import core.storage.impl.room.disk.DiskResourceDao
 import core.storage.impl.room.disk.DiskSyncOperationDao
-import disk.models.DiskPath
 import disk.models.resources.DiskResource
 import disk.models.sync.SyncOperation
 import disk.models.sync.SyncOperationState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import utils.types.DiskPath
 
 class DiskDatabaseDataSource(
     private val resourceDao: DiskResourceDao,
     private val syncOperationDao: DiskSyncOperationDao,
 ) {
     fun observeDirectory(path: DiskPath): Flow<List<DiskResource>> {
-        return resourceDao.observeByParentPath(path.value).map { resources ->
+        return resourceDao.observeParentPathContent(path.value).map { resources ->
             resources.map { it.toDomain() }
         }
+    }
+
+    suspend fun getDirectory(path: DiskPath): List<DiskResource> {
+        return resourceDao.getParentPathContent(path.value).map { it.toDomain() }
     }
 
     suspend fun getResource(path: DiskPath): DiskResource? {
@@ -56,6 +60,12 @@ class DiskDatabaseDataSource(
         state: SyncOperationState,
     ): List<SyncOperation> {
         return syncOperationDao.getByState(state.name).map { it.toDomain() }
+    }
+
+    suspend fun getSyncOperationsByStates(
+        states: List<SyncOperationState>,
+    ): List<SyncOperation> {
+        return syncOperationDao.getByStates(states.map { it.name }).map { it.toDomain() }
     }
 
     suspend fun getActiveSyncOperationByResourceLocalId(

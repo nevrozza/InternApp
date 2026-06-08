@@ -1,6 +1,6 @@
 package disk.models.resources
 
-import disk.models.DiskPath
+import utils.types.DiskPath
 import kotlin.time.Instant
 
 data class TextFileResource(

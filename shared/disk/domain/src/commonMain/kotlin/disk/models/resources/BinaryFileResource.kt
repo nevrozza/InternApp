@@ -1,7 +1,7 @@
 package disk.models.resources
 
-import disk.models.DiskPath
-import disk.models.LocalPath
+import utils.types.DiskPath
+import utils.types.LocalPath
 import kotlin.time.Instant
 
 data class BinaryFileResource(

@@ -17,7 +17,18 @@ interface DiskResourceDao {
             name COLLATE NOCASE ASC
         """,
     )
-    fun observeByParentPath(parentPath: String): Flow<List<DiskResourceEntity>>
+    fun observeParentPathContent(parentPath: String): Flow<List<DiskResourceEntity>>
+
+    @Query(
+        """
+        SELECT * FROM disk_resources
+        WHERE parentPath = :parentPath
+        ORDER BY
+            CASE WHEN type = 'DIRECTORY' THEN 0 ELSE 1 END,
+            name COLLATE NOCASE ASC
+        """,
+    )
+    suspend fun getParentPathContent(parentPath: String): List<DiskResourceEntity>
 
     @Query("SELECT * FROM disk_resources WHERE path = :path LIMIT 1")
     suspend fun getByPath(path: String): DiskResourceEntity?

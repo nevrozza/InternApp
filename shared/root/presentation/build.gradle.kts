@@ -8,6 +8,7 @@ kotlin {
             implementation(projects.shared.core.network)
             implementation(projects.shared.core.storage.impl)
             implementation(projects.shared.auth.data)
+            implementation(projects.shared.disk.data)
 
             implementation(projects.shared.auth.presentation)
 

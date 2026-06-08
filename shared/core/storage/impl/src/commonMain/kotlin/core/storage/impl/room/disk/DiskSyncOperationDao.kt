@@ -23,6 +23,15 @@ interface DiskSyncOperationDao {
     @Query(
         """
         SELECT * FROM disk_sync_out
+        WHERE state IN (:states)
+        ORDER BY id ASC
+        """,
+    )
+    suspend fun getByStates(states: List<String>): List<DiskSyncOperationEntity>
+
+    @Query(
+        """
+        SELECT * FROM disk_sync_out
         WHERE resourceLocalId = :resourceLocalId
         AND state IN (:states)
         LIMIT 1

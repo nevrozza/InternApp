@@ -1,6 +1,6 @@
 package disk.models.sync
 
-import disk.models.DiskPath
+import utils.types.DiskPath
 
 
 data class SyncOperation(

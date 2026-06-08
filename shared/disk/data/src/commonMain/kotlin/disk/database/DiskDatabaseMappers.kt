@@ -2,8 +2,6 @@ package disk.database
 
 import core.storage.impl.room.disk.DiskResourceEntity
 import core.storage.impl.room.disk.DiskSyncOperationEntity
-import disk.models.DiskPath
-import disk.models.LocalPath
 import disk.models.resources.BinaryFileResource
 import disk.models.resources.DirectoryResource
 import disk.models.resources.DiskResource
@@ -12,6 +10,8 @@ import disk.models.resources.TextFileResource
 import disk.models.sync.SyncOperation
 import disk.models.sync.SyncOperationState
 import disk.models.sync.SyncOperationType
+import utils.types.DiskPath
+import utils.types.LocalPath
 import kotlin.time.Instant
 
 internal fun DiskResourceEntity.toDomain(): DiskResource {
