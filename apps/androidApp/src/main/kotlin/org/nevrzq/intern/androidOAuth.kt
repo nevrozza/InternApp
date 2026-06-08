@@ -1,12 +1,13 @@
 package org.nevrzq.intern
 
 import android.content.Intent
+import androidx.activity.ComponentActivity
+import androidx.lifecycle.lifecycleScope
 import auth.repositories.YandexAuthRepository
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.core.context.GlobalContext.get
 
-fun handleOAuthIntent(lifecycleScope: CoroutineScope, intent: Intent?) {
+fun ComponentActivity.handleOAuthIntent(intent: Intent?) {
     val uri = intent?.data ?: return
     if (uri.scheme != "org.nevrzq.intern") return
     if (uri.host != "oauth") return
