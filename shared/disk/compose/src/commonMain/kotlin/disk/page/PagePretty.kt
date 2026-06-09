@@ -25,6 +25,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import disk.components.flow.DiskComponent.Companion.RootPath
+import disk.models.sync.SyncOperation
+import disk.mvi.DiskPageStore.SyncIndicatorState
 import disk.page.PageConsts.HeaderHeight
 import utils.compose.consts.Paddings
 import utils.compose.icons.back_button
@@ -38,6 +40,12 @@ internal fun PageHeader(
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     onBackClick: () -> Unit,
+
+    syncState: SyncIndicatorState,
+    onForceSyncClick: () -> Unit,
+    onCancelLocalSyncClick: (SyncOperation) -> Unit,
+    syncOperations: List<SyncOperation>,
+
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(
@@ -52,14 +60,18 @@ internal fun PageHeader(
             modifier = Modifier.matchParentSize(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            if(
+            if (
                 path != RootPath.value
             ) {
                 IconButton(
                     onClick = onBackClick,
                     modifier = Modifier.padding(end = Paddings.ultraUltraSmall)
                 ) {
-                    Icon(back_button, contentDescription = "BackButton", modifier = Modifier.offset(x = (-2).dp))
+                    Icon(
+                        back_button,
+                        contentDescription = "BackButton",
+                        modifier = Modifier.offset(x = (-2).dp)
+                    )
                 }
             }
 
@@ -85,6 +97,13 @@ internal fun PageHeader(
                     )
                 }
             }
+
+            SyncStatusButton(
+                state = syncState,
+                onForceSyncClick = onForceSyncClick,
+                onCancelLocalSyncClick = onCancelLocalSyncClick,
+                operations = syncOperations
+            )
         }
     }
 }

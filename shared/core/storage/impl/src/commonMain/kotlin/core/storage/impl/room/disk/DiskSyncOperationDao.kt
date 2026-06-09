@@ -35,4 +35,7 @@ interface DiskSyncOperationDao {
 
     @Query("DELETE FROM disk_sync_out WHERE id = :id")
     suspend fun deleteById(id: String)
+
+    @Query("DELETE FROM disk_sync_out WHERE resourceLocalId = :resourceLocalId")
+    suspend fun deleteByResourceLocalId(resourceLocalId: String)
 }

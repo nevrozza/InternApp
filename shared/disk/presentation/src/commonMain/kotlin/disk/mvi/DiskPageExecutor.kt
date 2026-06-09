@@ -2,10 +2,16 @@ package disk.mvi
 
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import disk.models.resources.DiskResource
+import disk.models.sync.SyncOperation
 import disk.mvi.DiskPageStore.Action
 import disk.mvi.DiskPageStore.Intent
 import disk.mvi.DiskPageStore.Label
+import disk.mvi.DiskPageStore.Label.ShowError
 import disk.mvi.DiskPageStore.Message
+import disk.mvi.DiskPageStore.Message.CreateMenuVisibilityChanged
+import disk.mvi.DiskPageStore.Message.ItemsChanged
+import disk.mvi.DiskPageStore.Message.ResourceMenuTargetChanged
+import disk.mvi.DiskPageStore.Message.SyncOperationsChanged
 import disk.mvi.DiskPageStore.State
 import disk.usecases.DiskUseCases
 import kotlinx.coroutines.CancellationException
@@ -24,10 +30,18 @@ internal class DiskPageExecutor(
             Action.ObservePage -> {
                 scope.launch {
                     diskUseCases.observeDirectory(state().currentPath).collect { resources ->
-                        dispatch(Message.ItemsChanged(resources))
+                        dispatch(ItemsChanged(resources))
                     }
                 }
                 refresh()
+            }
+
+            Action.ObserveSyncOps -> {
+                scope.launch {
+                    diskUseCases.observeSyncOperations().collect { syncOperations ->
+                        dispatch(SyncOperationsChanged(syncOperations))
+                    }
+                }
             }
         }
     }
@@ -35,16 +49,22 @@ internal class DiskPageExecutor(
     override fun executeIntent(intent: Intent) {
         when (intent) {
             Intent.Refresh -> refresh()
-            Intent.CreateMenuClicked -> dispatch(Message.CreateMenuVisibilityChanged(true))
-            Intent.CreateMenuDismissed -> dispatch(Message.CreateMenuVisibilityChanged(false))
-            is Intent.ResourceMenuRequested -> dispatch(Message.ResourceMenuTargetChanged(intent.resource))
-            Intent.ResourceMenuDismissed -> dispatch(Message.ResourceMenuTargetChanged(null))
+            Intent.CreateMenuClicked -> dispatch(CreateMenuVisibilityChanged(true))
+            Intent.CreateMenuDismissed -> dispatch(CreateMenuVisibilityChanged(false))
+            is Intent.ResourceMenuRequested -> dispatch(ResourceMenuTargetChanged(intent.resource))
+            Intent.ResourceMenuDismissed -> dispatch(ResourceMenuTargetChanged(null))
             is Intent.CreateFolderConfirmed -> createFolder(intent.name)
             is Intent.CreateTextFileConfirmed -> createTextFile(intent.name, intent.content)
             is Intent.DeleteResourceConfirmed -> deleteResource(intent.resource)
             is Intent.RenameResourceConfirmed -> renameResource(intent.resource, intent.name)
             is Intent.SaveTextFileConfirmed -> saveTextFile(intent.path, intent.content)
-            is Intent.ShowError -> publish(Label.ShowError(intent.message))
+            is Intent.ShowError -> publish(ShowError(intent.message))
+            Intent.OnSyncClicked -> scope.launch {
+                runDiskOperation {
+                    diskUseCases.pushSyncDisk()
+                }
+            }
+            is Intent.CancelLocalSyncConfirmed -> cancelLocalSync(intent.operation)
         }
     }
 
@@ -84,7 +104,7 @@ internal class DiskPageExecutor(
 
     private fun deleteResource(resource: DiskResource) {
         scope.launch {
-            dispatch(Message.ResourceMenuTargetChanged(null))
+            dispatch(ResourceMenuTargetChanged(null))
             runDiskOperation {
                 diskUseCases.deleteResource(resource.path)
                 diskUseCases.pushSyncDisk()
@@ -94,7 +114,7 @@ internal class DiskPageExecutor(
 
     private fun renameResource(resource: DiskResource, name: String) {
         scope.launch {
-            dispatch(Message.ResourceMenuTargetChanged(null))
+            dispatch(ResourceMenuTargetChanged(null))
             runDiskOperation {
                 diskUseCases.renameResource(
                     sourcePath = resource.path,
@@ -117,6 +137,14 @@ internal class DiskPageExecutor(
         }
     }
 
+    private fun cancelLocalSync(operation: SyncOperation) {
+        scope.launch {
+            runDiskOperation {
+                diskUseCases.cancelLocalSync(operation)
+            }
+        }
+    }
+
     private suspend fun runDiskOperation(block: suspend () -> Unit) {
         try {
             withContext(Dispatchers.IO) {
@@ -125,7 +153,7 @@ internal class DiskPageExecutor(
         } catch (error: CancellationException) {
             throw error
         } catch (error: Throwable) {
-            publish(Label.ShowError(error.message ?: "Disk operation failed"))
+            publish(ShowError(error.message ?: "Disk operation failed"))
         }
     }
 }

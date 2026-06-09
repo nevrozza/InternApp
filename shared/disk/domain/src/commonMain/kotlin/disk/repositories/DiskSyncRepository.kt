@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 interface DiskSyncRepository {
     fun observeOperations(): Flow<List<SyncOperation>>
     suspend fun sync()
+    suspend fun cancelLocal(operation: SyncOperation)
 }

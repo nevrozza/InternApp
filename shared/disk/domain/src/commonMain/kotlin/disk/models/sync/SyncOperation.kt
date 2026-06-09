@@ -1,8 +1,9 @@
 package disk.models.sync
 
+import androidx.compose.runtime.Immutable
 import utils.types.DiskPath
 
-
+@Immutable
 data class SyncOperation(
     val id: String,
     val resourceLocalId: String?,

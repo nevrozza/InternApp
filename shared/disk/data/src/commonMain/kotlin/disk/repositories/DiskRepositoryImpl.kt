@@ -9,6 +9,7 @@ import disk.models.sync.SyncOperation
 import disk.models.sync.SyncOperationState
 import disk.models.sync.SyncOperationType
 import disk.network.DiskRemoteDataSource
+import disk.network.dto.DiskResourceResponse
 import disk.network.toDomain
 import kotlinx.coroutines.flow.Flow
 import utils.types.DiskPath
@@ -47,7 +48,23 @@ class DiskRepositoryImpl(
             val remotePath = DiskPath(response.path)
             val local = localByPath[remotePath]
 
-            if (isLockedBySync(remotePath, local, activeOperations)) return@forEach
+            val syncOperation = findSyncOperation(
+                path = remotePath,
+                resource = local,
+                operations = activeOperations,
+            )
+
+            if (syncOperation != null) {
+                if (
+                    syncOperation.operation != SyncOperationType.RENAME &&
+                    local != null &&
+                    isEquivalent(local, response)
+                ) {
+                    database.deleteSyncOperation(syncOperation.id)
+                }
+
+                return@forEach
+            }
 
             val serverResource = response.toDomain(localId = local?.localId)
             if (local == null || serverResource.modified > local.modified) {
@@ -71,6 +88,40 @@ class DiskRepositoryImpl(
                 )
             ) {
                 database.deleteRemoteMissingResource(local.localId)
+            }
+        }
+    }
+
+    private fun findSyncOperation(
+        path: DiskPath,
+        resource: DiskResource?,
+        operations: List<SyncOperation>,
+    ): SyncOperation? {
+        return operations.firstOrNull {
+            it.resourceLocalId == resource?.localId ||
+                    it.resourceId == resource?.resourceId ||
+                    it.path == path ||
+                    it.targetPath == path
+        }
+    }
+
+    private suspend fun isEquivalent(
+        local: DiskResource,
+        response: DiskResourceResponse,
+    ): Boolean {
+        return when (local) {
+            is TextFileResource -> {
+                local.textContent == remote.downloadText(response.path)
+            }
+
+            is BinaryFileResource -> {
+                local.md5 != null &&
+                        local.md5 == response.md5
+            }
+
+            is DirectoryResource -> {
+                local.resourceId != null &&
+                        local.resourceId == response.resourceId
             }
         }
     }
@@ -99,6 +150,11 @@ class DiskRepositoryImpl(
 
     override suspend fun delete(path: DiskPath) {
         val resource = database.getResource(path) ?: return
+
+        if (resource.resourceId == null) {
+            database.deleteLocalResourceWithSyncOperations(resource.localId)
+            return
+        }
 
         database.deleteResourceWithSyncOperation(
             localId = resource.localId,
@@ -238,7 +294,9 @@ class DiskRepositoryImpl(
     }
 
     @OptIn(ExperimentalTime::class)
-    private fun now(): Instant { return Clock.System.now() }
+    private fun now(): Instant {
+        return Clock.System.now()
+    }
 
     private companion object {
         val ActiveSyncStates = listOf(

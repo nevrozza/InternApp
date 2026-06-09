@@ -2,32 +2,44 @@ package disk.repositories
 
 import disk.database.DiskDatabaseDataSource
 import disk.models.resources.BinaryFileResource
+import disk.models.resources.DirectoryResource
+import disk.models.resources.DiskResource
 import disk.models.resources.TextFileResource
 import disk.models.sync.SyncOperation
 import disk.models.sync.SyncOperationState
 import disk.models.sync.SyncOperationType
 import disk.network.DiskRemoteDataSource
+import disk.network.dto.DiskResourceResponse
 import disk.network.toDomain
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import utils.types.isTextFileName
 
 class DiskSyncRepositoryImpl(
     private val database: DiskDatabaseDataSource,
     private val remote: DiskRemoteDataSource,
 ) : DiskSyncRepository {
 
+    private val syncMutex = Mutex()
+
     override fun observeOperations(): Flow<List<SyncOperation>> {
         return database.observeSyncOperations()
     }
 
-    override suspend fun sync() {
+    override suspend fun sync() = syncMutex.withLock {
         val operations = database.getSyncOperationsByStates(
             listOf(SyncOperationState.PENDING, SyncOperationState.FAILED),
         )
         operations.forEach { operation ->
             syncOperation(operation)
         }
+    }
+
+    override suspend fun cancelLocal(operation: SyncOperation) {
+        database.cancelLocalSyncOperation(operation)
     }
 
     private suspend fun syncOperation(operation: SyncOperation) {
@@ -50,7 +62,17 @@ class DiskSyncRepositoryImpl(
     }
 
     private suspend fun syncCreateFolder(operation: SyncOperation) {
-        remote.createFolder(operation.path.value)
+        try {
+            remote.createFolder(operation.path.value)
+        } catch (error: ClientRequestException) {
+            if (!error.isConflict() || !completeIfRemoteResourceExists(operation) { response ->
+                    response.type == REMOTE_TYPE_DIRECTORY
+                }
+            ) {
+                throw error
+            }
+            return
+        }
         refreshSyncedResource(operation)
     }
 
@@ -65,21 +87,42 @@ class DiskSyncRepositoryImpl(
 
     private suspend fun syncRename(operation: SyncOperation) {
         val targetPath = checkNotNull(operation.targetPath)
-        remote.rename(
-            sourcePath = operation.path.value,
-            targetPath = targetPath.value,
-        )
-        refreshSyncedResource(operation.copy(path = targetPath))
+        val targetOperation = operation.copy(path = targetPath)
+
+        try {
+            remote.rename(
+                sourcePath = operation.path.value,
+                targetPath = targetPath.value,
+            )
+        } catch (error: ClientRequestException) {
+            if (
+                (!error.isConflict() && !error.isNotFound()) ||
+                !completeIfRemoteResourceIsEquivalent(targetOperation)
+            ) {
+                throw error
+            }
+            return
+        }
+        refreshSyncedResource(targetOperation)
     }
 
     private suspend fun syncUpsertTextFile(operation: SyncOperation) {
         val resource = database.getResourceByLocalId(operation.resourceLocalId ?: return)
         val textFile = resource as? TextFileResource ?: return
-        remote.uploadText(
-            path = textFile.path.value,
-            content = textFile.textContent,
-        )
-        refreshSyncedResource(operation.copy(path = textFile.path))
+        val textOperation = operation.copy(path = textFile.path)
+
+        try {
+            remote.uploadText(
+                path = textFile.path.value,
+                content = textFile.textContent,
+            )
+        } catch (error: ClientRequestException) {
+            if (!error.isConflict() || !completeIfRemoteResourceIsEquivalent(textOperation)) {
+                throw error
+            }
+            return
+        }
+        refreshSyncedResource(textOperation)
     }
 
     private suspend fun syncUploadFile(operation: SyncOperation) {
@@ -102,5 +145,65 @@ class DiskSyncRepositoryImpl(
             resource = refreshed,
             operationId = operation.id,
         )
+    }
+
+    private suspend fun completeIfRemoteResourceExists(
+        operation: SyncOperation,
+        predicate: suspend (DiskResourceResponse) -> Boolean,
+    ): Boolean {
+        val response = try {
+            remote.getResource(operation.path.value)
+        } catch (error: ClientRequestException) {
+            if (error.isNotFound()) return false
+            throw error
+        }
+
+        if (!predicate(response)) return false
+
+        refreshSyncedResource(operation)
+        return true
+    }
+
+    private suspend fun completeIfRemoteResourceIsEquivalent(operation: SyncOperation): Boolean {
+        val local = operation.resourceLocalId
+            ?.let { database.getResourceByLocalId(it) }
+            ?: return false
+
+        return completeIfRemoteResourceExists(operation) { response ->
+            local.isEquivalentTo(response)
+        }
+    }
+
+    private suspend fun DiskResource.isEquivalentTo(
+        response: DiskResourceResponse,
+    ): Boolean {
+        return when (this) {
+            is TextFileResource -> {
+                response.type != REMOTE_TYPE_DIRECTORY &&
+                    response.name.isTextFileName() &&
+                    textContent == remote.downloadText(response.path)
+            }
+
+            is BinaryFileResource -> {
+                md5 != null && md5 == response.md5
+            }
+
+            is DirectoryResource -> {
+                response.type == REMOTE_TYPE_DIRECTORY &&
+                    (resourceId == null || resourceId == response.resourceId)
+            }
+        }
+    }
+
+    private fun ClientRequestException.isConflict(): Boolean {
+        return response.status == HttpStatusCode.Conflict
+    }
+
+    private fun ClientRequestException.isNotFound(): Boolean {
+        return response.status == HttpStatusCode.NotFound
+    }
+
+    private companion object {
+        const val REMOTE_TYPE_DIRECTORY = "dir"
     }
 }

@@ -11,6 +11,7 @@ import disk.models.resources.BinaryFileResource
 import disk.models.resources.DirectoryResource
 import disk.models.resources.DiskResource
 import disk.models.resources.TextFileResource
+import disk.models.sync.SyncOperation
 import disk.mvi.DiskPageExecutor
 import disk.mvi.DiskPageReducer
 import disk.mvi.DiskPageStore.Action
@@ -36,7 +37,7 @@ class RealDiskPageComponent(
             storeFactory.create(
                 name = "DiskPageStore",
                 initialState = State(currentPath = path),
-                bootstrapper = SimpleBootstrapper(Action.ObservePage),
+                bootstrapper = SimpleBootstrapper(Action.ObservePage, Action.ObserveSyncOps),
                 executorFactory = {
                     DiskPageExecutor(diskUseCases = diskUseCases)
                 },
@@ -91,6 +92,14 @@ class RealDiskPageComponent(
     override fun onUploadFileClicked() {
         onEvent(Intent.CreateMenuDismissed)
         showError("Загрузка файла пока заглушка")
+    }
+
+    override fun onSyncClicked() {
+        onEvent(Intent.OnSyncClicked)
+    }
+
+    override fun onCancelLocalSyncClicked(operation: SyncOperation) {
+        onEvent(Intent.CancelLocalSyncConfirmed(operation))
     }
 
     override fun onResourceMenuRequested(resource: DiskResource) {

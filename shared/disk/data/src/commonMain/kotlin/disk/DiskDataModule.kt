@@ -13,6 +13,7 @@ import disk.usecases.directory.RefreshDirectoryUseCase
 import disk.usecases.resource.DeleteResourceUseCase
 import disk.usecases.resource.RenameResourceUseCase
 import disk.usecases.resource.UploadFileUseCase
+import disk.usecases.sync.CancelLocalSyncUseCase
 import disk.usecases.sync.ObserveSyncOperationsUseCase
 import disk.usecases.sync.PushSyncDiskUseCase
 import disk.usecases.text.SaveTextFileUseCase
@@ -39,6 +40,7 @@ val diskDataModule = module {
     factory { UploadFileUseCase(get()) }
     factory { ObserveSyncOperationsUseCase(get()) }
     factory { PushSyncDiskUseCase(get()) }
+    factory { CancelLocalSyncUseCase(get()) }
 
     factory {
         DiskUseCases(
@@ -51,6 +53,7 @@ val diskDataModule = module {
             uploadFile = get(),
             observeSyncOperations = get(),
             pushSyncDisk = get(),
+            cancelLocalSync = get(),
         )
     }
 }

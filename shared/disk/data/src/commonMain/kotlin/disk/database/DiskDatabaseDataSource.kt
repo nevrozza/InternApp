@@ -59,6 +59,18 @@ class DiskDatabaseDataSource(
         syncOperationDao.upsert(operation.toEntity())
     }
 
+    suspend fun deleteLocalResourceWithSyncOperations(localId: String) = transaction {
+        resourceDao.deleteByLocalId(localId)
+        syncOperationDao.deleteByResourceLocalId(localId)
+    }
+
+    suspend fun cancelLocalSyncOperation(operation: SyncOperation) = transaction {
+        operation.resourceLocalId?.let { localId ->
+            resourceDao.deleteByLocalId(localId)
+            syncOperationDao.deleteByResourceLocalId(localId)
+        } ?: syncOperationDao.deleteById(operation.id)
+    }
+
     suspend fun replaceResourceWithSyncOperation(
         oldLocalId: String,
         resource: DiskResource,

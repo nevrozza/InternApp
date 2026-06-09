@@ -111,6 +111,10 @@ internal fun DiskPage(
             onRefresh = component::onRefresh,
             onBackClick = component::onBackClicked,
             modifier = Modifier.padding(top = topPadding).align(Alignment.TopCenter),
+            syncState = model.syncIndicatorState,
+            onForceSyncClick = component::onSyncClicked,
+            onCancelLocalSyncClick = component::onCancelLocalSyncClicked,
+            syncOperations = model.syncOperations
         )
 
         if (model.isCreateMenuVisible) {

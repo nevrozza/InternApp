@@ -6,6 +6,7 @@ import disk.dialogs.DiskDialogChild
 import disk.dialogs.DiskDialogConfig
 import disk.models.resources.DiskResource
 import disk.models.resources.TextFileResource
+import disk.models.sync.SyncOperation
 import disk.mvi.DiskPageStore.State
 import disk.mvi.DiskPageStore.Label
 import kotlinx.coroutines.flow.Flow
@@ -28,6 +29,9 @@ interface DiskPageComponent {
     fun onCreateFolderClicked()
     fun onCreateTextFileClicked()
     fun onUploadFileClicked()
+
+    fun onSyncClicked()
+    fun onCancelLocalSyncClicked(operation: SyncOperation)
 
     fun onResourceMenuRequested(resource: DiskResource)
     fun onResourceMenuDismissed()
