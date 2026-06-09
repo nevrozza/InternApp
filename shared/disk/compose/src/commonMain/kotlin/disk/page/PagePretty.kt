@@ -1,14 +1,17 @@
 package disk.page
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,29 +20,57 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import disk.page.PageConsts.HeaderHeight
 import utils.compose.consts.Paddings
+import utils.compose.icons.refresh
+
+private val ExpandedHeaderMinWidth = 600.dp
 
 @Composable
 internal fun PageHeader(
     path: String,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
+    BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth()
             .height(HeaderHeight)
-            .horizontalScroll(rememberScrollState())
             .padding(horizontal = Paddings.medium),
-        contentAlignment = Alignment.CenterStart,
     ) {
-        Text(
-            text = path,
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            maxLines = 1
-        )
+        val showRefreshButton = maxWidth >= ExpandedHeaderMinWidth
+
+        Row(
+            modifier = Modifier.matchParentSize(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = path,
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+
+            if (showRefreshButton) {
+                IconButton(
+                    onClick = onRefresh,
+                    enabled = !isRefreshing,
+                ) {
+                    Icon(
+                        imageVector = refresh,
+                        contentDescription = "Refresh",
+                        modifier = Modifier.size(24.dp),
+                        tint = MaterialTheme.colorScheme.onBackground,
+                    )
+                }
+            }
+        }
     }
 }
 

@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -35,6 +38,7 @@ internal fun DiskPage(
     val safePaddings = WindowInsets.safeDrawing.asPaddingValues()
     val topPadding = safePaddings.calculateTopPadding()
     val bottomPadding = safePaddings.calculateBottomPadding()
+    val pullToRefreshState = rememberPullToRefreshState()
 
     LaunchedEffect(component) {
         component.labels.collect { label ->
@@ -54,12 +58,28 @@ internal fun DiskPage(
             .fillMaxSize()
     ) {
 
-        PageGrid(
-            topPadding = topPadding,
-            bottomPadding = bottomPadding,
-            authWidget = authWidget,
-            items = model.items
-        )
+        PullToRefreshBox(
+            isRefreshing = model.isRefreshing,
+            onRefresh = component::onRefresh,
+            state = pullToRefreshState,
+            modifier = Modifier.fillMaxSize(),
+            indicator = {
+                PullToRefreshDefaults.Indicator(
+                    state = pullToRefreshState,
+                    isRefreshing = model.isRefreshing,
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(top = topPadding),
+                )
+            },
+        ) {
+            PageGrid(
+                topPadding = topPadding,
+                bottomPadding = bottomPadding,
+                authWidget = authWidget,
+                items = model.items,
+            )
+        }
 
         TopShadow(
             modifier = Modifier
@@ -76,6 +96,8 @@ internal fun DiskPage(
 
         PageHeader(
             path = model.currentPath.value,
+            isRefreshing = model.isRefreshing,
+            onRefresh = component::onRefresh,
             modifier = Modifier.padding(top = topPadding).align(Alignment.TopCenter),
         )
 
