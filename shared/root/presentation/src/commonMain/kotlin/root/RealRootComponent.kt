@@ -2,6 +2,7 @@ package root
 
 import auth.RealAuthComponent
 import com.arkivanov.decompose.ComponentContext
+import disk.components.flow.RealDiskComponent
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import utils.presentation.navigation.DefaultStack
@@ -23,17 +24,20 @@ class RealRootComponent(
     ): Root.Child =
         when (config) {
             Root.Config.Disk -> Root.Child.Disk(
-                RealAuthComponent(
+                RealDiskComponent(
                     componentContext = childCtx,
-                    storeFactory = get(),
-                    yandexOAuthUrlProvider = get(),
-                    observeAuthEventsUseCase = get(),
-                    observeAuthStateUseCase = get(),
-                    refreshAuthStateUseCase = get(),
-                    getYandexUserProfileUseCase = get(),
-                    startYandexOAuthCallbackServerUseCase = get(),
-                    stopYandexOAuthCallbackServerUseCase = get(),
-                    logoutUseCase = get()
+                    authComponent = RealAuthComponent(
+                        componentContext = childCtx,
+                        storeFactory = get(),
+                        yandexOAuthUrlProvider = get(),
+                        observeAuthEventsUseCase = get(),
+                        observeAuthStateUseCase = get(),
+                        refreshAuthStateUseCase = get(),
+                        getYandexUserProfileUseCase = get(),
+                        startYandexOAuthCallbackServerUseCase = get(),
+                        stopYandexOAuthCallbackServerUseCase = get(),
+                        logoutUseCase = get()
+                    ),
                 )
             )
         }

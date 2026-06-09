@@ -11,6 +11,7 @@ kotlin {
             implementation(projects.shared.disk.data)
 
             implementation(projects.shared.auth.presentation)
+            implementation(projects.shared.disk.presentation)
 
             implementation(libs.mvikotlin.main)
             implementation(libs.mvikotlin.logging)

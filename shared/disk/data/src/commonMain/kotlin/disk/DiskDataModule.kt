@@ -6,6 +6,7 @@ import disk.repositories.DiskRepository
 import disk.repositories.DiskRepositoryImpl
 import disk.repositories.DiskSyncRepository
 import disk.repositories.DiskSyncRepositoryImpl
+import disk.usecases.DiskUseCases
 import disk.usecases.directory.CreateFolderUseCase
 import disk.usecases.directory.ObserveDirectoryUseCase
 import disk.usecases.directory.RefreshDirectoryUseCase
@@ -38,4 +39,18 @@ val diskDataModule = module {
     factory { UploadFileUseCase(get()) }
     factory { ObserveSyncOperationsUseCase(get()) }
     factory { PushSyncDiskUseCase(get()) }
+
+    factory {
+        DiskUseCases(
+            observeDirectory = get(),
+            refreshDirectory = get(),
+            createFolder = get(),
+            deleteResource = get(),
+            renameResource = get(),
+            saveTextFile = get(),
+            uploadFile = get(),
+            observeSyncOperations = get(),
+            pushSyncDisk = get(),
+        )
+    }
 }
