@@ -26,7 +26,7 @@ value class DiskPath(val value: String) {
     fun parent(): DiskPath {
         val raw = value.removePrefix("disk:")
         val parent = raw.substringBeforeLast("/", missingDelimiterValue = "/")
-        return DiskPath("disk:$parent")
+        return DiskPath("disk:${parent.ifEmpty { "/" }}")
     }
 
     fun name(): String {
