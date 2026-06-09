@@ -2,6 +2,7 @@ package disk.mvi
 
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import disk.models.resources.DiskResource
+import disk.models.resources.TextFileResource
 import disk.models.sync.SyncOperation
 import disk.mvi.DiskPageStore.Action
 import disk.mvi.DiskPageStore.Intent
@@ -20,6 +21,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import utils.types.DiskPath
+import utils.types.isTextFileName
 
 internal class DiskPageExecutor(
     private val diskUseCases: DiskUseCases,
@@ -94,7 +96,7 @@ internal class DiskPageExecutor(
         scope.launch {
             runDiskOperation {
                 diskUseCases.saveTextFile(
-                    path = state().currentPath.child(name),
+                    path = state().currentPath.child(name.withTextExtension()),
                     content = content,
                 )
                 diskUseCases.pushSyncDisk()
@@ -118,7 +120,11 @@ internal class DiskPageExecutor(
             runDiskOperation {
                 diskUseCases.renameResource(
                     sourcePath = resource.path,
-                    newName = name,
+                    newName = if (resource is TextFileResource) {
+                        name.withTextExtension()
+                    } else {
+                        name
+                    },
                 )
                 diskUseCases.pushSyncDisk()
             }
@@ -143,6 +149,10 @@ internal class DiskPageExecutor(
                 diskUseCases.cancelLocalSync(operation)
             }
         }
+    }
+
+    private fun String.withTextExtension(): String {
+        return if (isTextFileName()) this else "$this.txt"
     }
 
     private suspend fun runDiskOperation(block: suspend () -> Unit) {
