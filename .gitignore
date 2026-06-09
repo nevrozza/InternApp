@@ -17,3 +17,4 @@ captures
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
+/shared/core/storage/impl/schemas/core.storage.impl.room.AppDatabase/1.json

@@ -11,10 +11,12 @@ kotlin {
             api(projects.shared.core.common)
 
             implementation(libs.koin.core)
+            implementation(libs.kotlinx.coroutines)
 
             implementation(libs.settings.core)
 
             implementation(libs.room.runtime)
+            implementation(libs.sqlite.bundled)
         }
 
         androidMain.dependencies {

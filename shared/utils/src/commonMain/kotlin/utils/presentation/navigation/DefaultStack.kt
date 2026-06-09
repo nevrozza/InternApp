@@ -7,6 +7,7 @@ import com.arkivanov.decompose.router.stack.active
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.router.stack.replaceCurrent
 import com.arkivanov.decompose.value.Value
@@ -35,6 +36,9 @@ abstract class DefaultStack<Config : Any, Child : Any>(
 
     fun openSingle(config: Config) =
         nav.bringToFront(config)
+
+    fun openNew(config: Config) =
+        nav.pushNew(config)
 
     fun replace(config: Config) =
         nav.replaceCurrent(config)

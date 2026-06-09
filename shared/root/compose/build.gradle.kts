@@ -9,7 +9,7 @@ kotlin {
 
             implementation(projects.shared.utils.compose)
 
-            implementation(projects.shared.auth.compose)
+            implementation(projects.shared.disk.compose)
 
         }
     }

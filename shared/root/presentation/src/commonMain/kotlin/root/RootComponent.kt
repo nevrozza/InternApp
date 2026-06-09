@@ -1,9 +1,9 @@
 package root
 
-import auth.AuthComponent
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.essenty.backhandler.BackHandlerOwner
+import disk.components.flow.DiskComponent
 import kotlinx.serialization.Serializable
 
 interface RootComponent : BackHandlerOwner {
@@ -23,7 +23,7 @@ interface Root {
 
     sealed interface Child {
         data class Disk(
-            val authComponent: AuthComponent
+            val diskComponent: DiskComponent
         ) : Child
     }
 }
