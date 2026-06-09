@@ -43,8 +43,9 @@ class RealDiskComponent(
 
     private fun onPageOutput(output: DiskPageComponent.Output) {
         when (output) {
-            is DiskPageComponent.Output.NavigateToDirectory -> openSingle(Disk.Config.Page(output.path))
-            DiskPageComponent.Output.NavigateBack -> onBackClicked()
+            is DiskPageComponent.Output.NavigateToDirectory -> openNew(Disk.Config.Page(output.path))
+            DiskPageComponent.Output.NavigateBack -> popOnce(Disk.Child.Page::class)
+
         }
     }
 }

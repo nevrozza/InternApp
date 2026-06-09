@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -23,8 +24,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import disk.components.flow.DiskComponent.Companion.RootPath
 import disk.page.PageConsts.HeaderHeight
 import utils.compose.consts.Paddings
+import utils.compose.icons.back_button
 import utils.compose.icons.refresh
 
 private val ExpandedHeaderMinWidth = 600.dp
@@ -34,6 +37,7 @@ internal fun PageHeader(
     path: String,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(
@@ -48,6 +52,17 @@ internal fun PageHeader(
             modifier = Modifier.matchParentSize(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            if(
+                path != RootPath.value
+            ) {
+                IconButton(
+                    onClick = onBackClick,
+                    modifier = Modifier.padding(end = Paddings.ultraUltraSmall)
+                ) {
+                    Icon(back_button, contentDescription = "BackButton", modifier = Modifier.offset(x = (-2).dp))
+                }
+            }
+
             Text(
                 text = path,
                 modifier = Modifier.weight(1f),

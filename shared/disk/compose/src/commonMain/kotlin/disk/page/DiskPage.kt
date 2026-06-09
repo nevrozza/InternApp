@@ -57,7 +57,6 @@ internal fun DiskPage(
         modifier = Modifier
             .fillMaxSize()
     ) {
-
         PullToRefreshBox(
             isRefreshing = model.isRefreshing,
             onRefresh = component::onRefresh,
@@ -78,6 +77,7 @@ internal fun DiskPage(
                 bottomPadding = bottomPadding,
                 authWidget = authWidget,
                 items = model.items,
+                onItemClicked = component::onResourceClicked
             )
         }
 
@@ -98,6 +98,7 @@ internal fun DiskPage(
             path = model.currentPath.value,
             isRefreshing = model.isRefreshing,
             onRefresh = component::onRefresh,
+            onBackClick = component::onBackClicked,
             modifier = Modifier.padding(top = topPadding).align(Alignment.TopCenter),
         )
 

@@ -1,6 +1,7 @@
 package disk.page
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,7 +48,8 @@ internal fun PageGrid(
     topPadding: Dp,
     bottomPadding: Dp,
     authWidget: @Composable () -> Unit,
-    items: List<DiskResource>
+    items: List<DiskResource>,
+    onItemClicked: (DiskResource) -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(GridItemMinSize),
@@ -56,7 +58,7 @@ internal fun PageGrid(
             start = GridHorizontalPadding,
             top = HeaderHeight + topPadding + Paddings.semiMedium,
             end = GridHorizontalPadding,
-            bottom = BottomShadowHeight  + bottomPadding,
+            bottom = BottomShadowHeight + bottomPadding,
         ),
         horizontalArrangement = Arrangement.spacedBy(GridItemSpacing),
         verticalArrangement = Arrangement.spacedBy(GridItemSpacing),
@@ -75,7 +77,9 @@ internal fun PageGrid(
             items = items,
             key = DiskResource::localId,
         ) { resource ->
-            DiskGridItem(resource = resource)
+            DiskGridItem(resource = resource) {
+                onItemClicked(resource)
+            }
         }
     }
 }
@@ -84,12 +88,14 @@ internal fun PageGrid(
 private fun DiskGridItem(
     resource: DiskResource,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .aspectRatio(1f)
             .clip(MaterialTheme.shapes.medium)
+            .clickable(onClick = onClick)
             .background(MaterialTheme.colorScheme.surfaceContainer)
             .padding(horizontal = Paddings.small).padding(top = Paddings.medium),
         contentAlignment = Alignment.Center,
