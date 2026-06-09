@@ -1,14 +1,17 @@
 package utils.types
 
+import kotlinx.serialization.Serializable
 import kotlin.jvm.JvmInline
 
 fun String.isTextFileName(): Boolean {
     return endsWith(".txt", ignoreCase = true)
 }
 
+@Serializable
 @JvmInline
 value class LocalPath(val value: String)
 
+@Serializable
 @JvmInline
 value class DiskPath(val value: String) {
     fun child(name: String): DiskPath {
