@@ -15,12 +15,6 @@ plugins {
 }
 
 kotlin {
-    sourceSets {
-        commonMain.dependencies {
-            implementation(libs.kotlinx.datetime)
-        }
-    }
-
     android {
         namespace = Config.Android.namespace(project.path)
         compileSdk = Config.Android.compileSdk

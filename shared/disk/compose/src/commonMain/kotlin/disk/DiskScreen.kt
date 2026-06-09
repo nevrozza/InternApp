@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,21 +41,18 @@ fun DiskScreen(
         when (val child = it.instance) {
             is Disk.Child.Page -> {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Column(Modifier.fillMaxSize().safeDrawingPadding()) {
+                    Column(Modifier.fillMaxSize()) {
                         DiskPage(child.component) {
                             if (child.component.model.value.currentPath == DiskComponent.RootPath) {
                                 AuthWidget(
                                     modifier = Modifier.fillMaxWidth()
-                                        .padding(
-                                            horizontal = Paddings.medium,
-                                            vertical = Paddings.semiBig
-                                        )
                                         .clip(MaterialTheme.shapes.extraLarge)
                                         .background(MaterialTheme.colorScheme.surfaceContainer)
                                         .padding(
                                             horizontal = Paddings.medium,
-                                            vertical = Paddings.semiBig
-                                        ).animateContentSize(),
+                                            vertical = Paddings.semiBig,
+                                        )
+                                        .animateContentSize(),
                                     component = component.authComponent
                                 )
                             }
