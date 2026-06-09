@@ -30,6 +30,9 @@ class RealAuthComponent(
     startYandexOAuthCallbackServerUseCase: StartYandexOAuthCallbackServerUseCase,
     stopYandexOAuthCallbackServerUseCase: StopYandexOAuthCallbackServerUseCase,
     logoutUseCase: LogoutUseCase,
+    onAuthorizationRestored: suspend () -> Unit = {},
+    onAuthorizedAfterLogin: suspend () -> Unit = {},
+    onUnauthorized: suspend () -> Unit = {},
 ) : AuthComponent,
     DefaultMVIComponent<Intent, State, Label>(
         componentContext = componentContext,
@@ -48,6 +51,9 @@ class RealAuthComponent(
                         startYandexOAuthCallbackServerUseCase = startYandexOAuthCallbackServerUseCase,
                         stopYandexOAuthCallbackServerUseCase = stopYandexOAuthCallbackServerUseCase,
                         logoutUseCase = logoutUseCase,
+                        onAuthorizationRestored = onAuthorizationRestored,
+                        onAuthorizedAfterLogin = onAuthorizedAfterLogin,
+                        onUnauthorized = onUnauthorized,
                     )
                 },
                 reducer = AuthReducer,

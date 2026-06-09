@@ -153,7 +153,7 @@ internal class DiskPageExecutor(
         } catch (error: CancellationException) {
             throw error
         } catch (error: Throwable) {
-            publish(ShowError(error.message ?: "Disk operation failed"))
+//            publish(ShowError(error.message ?: "Disk operation failed"))
         }
     }
 }

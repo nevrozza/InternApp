@@ -128,6 +128,11 @@ class DiskDatabaseDataSource(
         syncOperationDao.deleteById(id)
     }
 
+    suspend fun clear() = transaction {
+        syncOperationDao.deleteAll()
+        resourceDao.deleteAll()
+    }
+
     private suspend fun <T> transaction(block: suspend () -> T): T {
         return database.useWriterConnection { transactor ->
             transactor.withTransaction(SQLiteTransactionType.IMMEDIATE) {

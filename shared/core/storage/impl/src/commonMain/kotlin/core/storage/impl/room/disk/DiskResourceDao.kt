@@ -41,4 +41,7 @@ interface DiskResourceDao {
 
     @Query("DELETE FROM disk_resources WHERE localId = :localId")
     suspend fun deleteByLocalId(localId: String)
+
+    @Query("DELETE FROM disk_resources")
+    suspend fun deleteAll()
 }

@@ -7,6 +7,7 @@ import disk.usecases.resource.DeleteResourceUseCase
 import disk.usecases.resource.RenameResourceUseCase
 import disk.usecases.resource.UploadFileUseCase
 import disk.usecases.sync.CancelLocalSyncUseCase
+import disk.usecases.sync.ClearDiskCacheUseCase
 import disk.usecases.sync.ObserveSyncOperationsUseCase
 import disk.usecases.sync.PushSyncDiskUseCase
 import disk.usecases.text.SaveTextFileUseCase
@@ -22,4 +23,5 @@ data class DiskUseCases(
     val observeSyncOperations: ObserveSyncOperationsUseCase,
     val pushSyncDisk: PushSyncDiskUseCase,
     val cancelLocalSync: CancelLocalSyncUseCase,
+    val clearDiskCache: ClearDiskCacheUseCase,
 )

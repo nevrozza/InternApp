@@ -42,6 +42,10 @@ class DiskSyncRepositoryImpl(
         database.cancelLocalSyncOperation(operation)
     }
 
+    override suspend fun clearLocalState() = syncMutex.withLock {
+        database.clear()
+    }
+
     private suspend fun syncOperation(operation: SyncOperation) {
         database.updateSyncOperationState(operation.id, SyncOperationState.RUNNING)
 
