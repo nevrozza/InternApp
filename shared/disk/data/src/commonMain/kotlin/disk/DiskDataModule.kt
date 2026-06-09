@@ -6,6 +6,15 @@ import disk.repositories.DiskRepository
 import disk.repositories.DiskRepositoryImpl
 import disk.repositories.DiskSyncRepository
 import disk.repositories.DiskSyncRepositoryImpl
+import disk.usecases.directory.CreateFolderUseCase
+import disk.usecases.directory.ObserveDirectoryUseCase
+import disk.usecases.directory.RefreshDirectoryUseCase
+import disk.usecases.resource.DeleteResourceUseCase
+import disk.usecases.resource.RenameResourceUseCase
+import disk.usecases.resource.UploadFileUseCase
+import disk.usecases.sync.ObserveSyncOperationsUseCase
+import disk.usecases.sync.PushSyncDiskUseCase
+import disk.usecases.text.SaveTextFileUseCase
 import org.koin.dsl.module
 
 val diskDataModule = module {
@@ -19,4 +28,14 @@ val diskDataModule = module {
     single<DiskRemoteDataSource> { DiskRemoteDataSource(get()) }
     single<DiskRepository> { DiskRepositoryImpl(get(), get()) }
     single<DiskSyncRepository> { DiskSyncRepositoryImpl(get(), get()) }
+
+    factory { ObserveDirectoryUseCase(get()) }
+    factory { RefreshDirectoryUseCase(get()) }
+    factory { CreateFolderUseCase(get()) }
+    factory { DeleteResourceUseCase(get()) }
+    factory { RenameResourceUseCase(get()) }
+    factory { SaveTextFileUseCase(get()) }
+    factory { UploadFileUseCase(get()) }
+    factory { ObserveSyncOperationsUseCase(get()) }
+    factory { PushSyncDiskUseCase(get()) }
 }
