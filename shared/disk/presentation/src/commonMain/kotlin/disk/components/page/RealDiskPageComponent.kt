@@ -4,6 +4,8 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.SlotNavigation
 import com.arkivanov.decompose.router.slot.activate
 import com.arkivanov.decompose.router.slot.childSlot
+import com.arkivanov.essenty.backhandler.BackCallback
+import com.arkivanov.essenty.lifecycle.subscribe
 import com.arkivanov.mvikotlin.core.store.SimpleBootstrapper
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import disk.dialogs.DiskDialogConfig
@@ -48,6 +50,19 @@ class RealDiskPageComponent(
 
     val dialogNav = SlotNavigation<DiskDialogConfig>()
 
+    private val createMenuBackCallback = BackCallback(isEnabled = false) {
+        onCreateMenuDismissed()
+    }
+
+    init {
+        backHandler.register(createMenuBackCallback)
+        lifecycle.subscribe(
+            onDestroy = {
+                backHandler.unregister(createMenuBackCallback)
+            },
+        )
+    }
+
     override val dialogSlot = childSlot(
         source = dialogNav,
         serializer = DiskDialogConfig.serializer(),
@@ -72,25 +87,27 @@ class RealDiskPageComponent(
     }
 
     override fun onCreateMenuClicked() {
+        createMenuBackCallback.isEnabled = true
         onEvent(Intent.CreateMenuClicked)
     }
 
     override fun onCreateMenuDismissed() {
+        createMenuBackCallback.isEnabled = false
         onEvent(Intent.CreateMenuDismissed)
     }
 
     override fun onCreateFolderClicked() {
-        onEvent(Intent.CreateMenuDismissed)
+        onCreateMenuDismissed()
         dialogNav.activate(DiskDialogConfig.CreateFolder)
     }
 
     override fun onCreateTextFileClicked() {
-        onEvent(Intent.CreateMenuDismissed)
+        onCreateMenuDismissed()
         dialogNav.activate(DiskDialogConfig.CreateTextFile)
     }
 
     override fun onUploadFileClicked() {
-        onEvent(Intent.CreateMenuDismissed)
+        onCreateMenuDismissed()
         showError("Загрузка файла пока заглушка")
     }
 
