@@ -2,13 +2,13 @@ package disk.components.flow
 
 import auth.AuthComponent
 import com.arkivanov.decompose.ComponentContext
+import disk.components.flow.DiskComponent.Companion.RootPath
 import disk.components.page.DiskPageComponent
 import disk.components.page.RealDiskPageComponent
 import disk.validation.DiskNameValidator
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import utils.presentation.navigation.DefaultStack
-import utils.types.DiskPath
 
 class RealDiskComponent(
     componentContext: ComponentContext,
@@ -46,9 +46,5 @@ class RealDiskComponent(
             is DiskPageComponent.Output.NavigateToDirectory -> openSingle(Disk.Config.Page(output.path))
             DiskPageComponent.Output.NavigateBack -> onBackClicked()
         }
-    }
-
-    private companion object {
-        val RootPath = DiskPath("disk:/")
     }
 }

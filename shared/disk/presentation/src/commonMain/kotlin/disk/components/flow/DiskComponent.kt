@@ -13,6 +13,10 @@ interface DiskComponent : BackHandlerOwner {
     val stack: Value<ChildStack<Disk.Config, Disk.Child>>
 
     fun onBackClicked()
+
+    companion object {
+        val RootPath = DiskPath("disk:/")
+    }
 }
 
 interface Disk {

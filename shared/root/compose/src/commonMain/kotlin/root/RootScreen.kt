@@ -1,19 +1,13 @@
 package root
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback.predictiveBackAnimation
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import disk.DiskScreen
 
 @OptIn(ExperimentalDecomposeApi::class)
 @Composable
@@ -30,21 +24,7 @@ internal fun RootScreen(
         )
     ) {
         when (val child = it.instance) {
-            is Root.Child.Disk -> {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Column(Modifier.fillMaxSize().safeDrawingPadding()) {
-//                        AuthWidget(
-//                            modifier = Modifier.fillMaxWidth()
-//                                .padding(horizontal = Paddings.medium, vertical = Paddings.semiBig)
-//                                .clip(MaterialTheme.shapes.extraLarge)
-//                                .background(MaterialTheme.colorScheme.surfaceContainer)
-//                                .padding(horizontal = Paddings.medium, vertical = Paddings.semiBig).animateContentSize(),
-//                            component = child.diskComponent.authComponent
-//                        )
-                        Text("Disk")
-                    }
-                }
-            }
+            is Root.Child.Disk -> DiskScreen(child.diskComponent)
         }
     }
 
