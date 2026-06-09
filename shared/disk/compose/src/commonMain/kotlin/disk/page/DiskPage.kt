@@ -1,5 +1,7 @@
 package disk.page
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -80,7 +82,13 @@ internal fun DiskPage(
                 bottomPadding = bottomPadding,
                 authWidget = authWidget,
                 items = model.items,
-                onItemClicked = component::onResourceClicked
+                menuTarget = model.resourceMenuTarget,
+                onItemClicked = component::onResourceClicked,
+                onItemMenuRequested = component::onResourceMenuRequested,
+                onItemMenuDismissed = component::onResourceMenuDismissed,
+                onRenameClicked = component::onRenameClicked,
+                onDeleteClicked = component::onDeleteClicked,
+                onEditTextClicked = component::onEditTextClicked,
             )
         }
 
@@ -105,6 +113,25 @@ internal fun DiskPage(
             modifier = Modifier.padding(top = topPadding).align(Alignment.TopCenter),
         )
 
+        if (model.isCreateMenuVisible) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = component::onCreateMenuDismissed,
+                    )
+            )
+        }
+
+        PageFab(
+            component = component,
+            isExpanded = model.isCreateMenuVisible,
+            bottomPadding = bottomPadding,
+            modifier = Modifier.align(Alignment.BottomEnd),
+        )
+
         SnackbarHost(
             hostState = snackbarHostState,
             modifier = Modifier
@@ -112,5 +139,7 @@ internal fun DiskPage(
                 .navigationBarsPadding()
                 .padding(Paddings.medium),
         )
+
+        DiskDialogs(component = component)
     }
 }

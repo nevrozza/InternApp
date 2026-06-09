@@ -1,7 +1,5 @@
 package org.nevrzq.intern
 
-import android.annotation.SuppressLint
-import android.content.pm.ActivityInfo
 import android.graphics.Color.TRANSPARENT
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -10,9 +8,6 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 
 internal fun ComponentActivity.screenSetup() {
-    @SuppressLint("SourceLockedOrientationActivity")
-    this.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-
     edgeToEdgeSetup()
 }
 
