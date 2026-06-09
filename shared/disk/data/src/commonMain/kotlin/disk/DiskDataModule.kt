@@ -11,6 +11,7 @@ import org.koin.dsl.module
 val diskDataModule = module {
     single<DiskDatabaseDataSource> {
         DiskDatabaseDataSource(
+            database = get(),
             resourceDao = get(),
             syncOperationDao = get(),
         )

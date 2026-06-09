@@ -39,12 +39,6 @@ interface DiskResourceDao {
     @Upsert
     suspend fun upsert(resource: DiskResourceEntity)
 
-    @Upsert
-    suspend fun upsert(resources: List<DiskResourceEntity>)
-
-    @Query("DELETE FROM disk_resources WHERE path = :path")
-    suspend fun deleteByPath(path: String)
-
     @Query("DELETE FROM disk_resources WHERE localId = :localId")
     suspend fun deleteByLocalId(localId: String)
 }
